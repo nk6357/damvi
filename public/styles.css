@@ -6,10 +6,10 @@ a { color:inherit; }
 button,input,textarea { font:inherit; }
 button,a { -webkit-tap-highlight-color:transparent; }
 .sr-only { position:absolute!important; height:1px!important; width:1px!important; overflow:hidden!important; clip:rect(1px,1px,1px,1px)!important; white-space:nowrap!important; }
-.section-split { display:grid; grid-template-columns:1fr 1fr; min-height:720px; }
+.section-split { display:grid; grid-template-columns:46% 54%; min-height:720px; }
 .hero-form,.approach-copy { background:var(--light); }
-.hero-form { position:relative; padding:52px 45px 50px 70px; overflow:hidden; }
-.hero-logo { display:block; width:202px; height:auto; }
+.hero-form { position:relative; display:flex; flex-direction:column; align-items:center; padding:52px 45px 50px 70px; overflow:hidden; }
+.hero-logo { display:block; align-self:flex-start; width:202px; height:auto; }
 .hero h1,.approach h2,.services-section h2,.works h2,.inner-header h1 { margin:0; font-family:var(--display); font-weight:900; letter-spacing:-.055em; text-transform:uppercase; }
 .hero h1 { width:max-content; max-width:100%; margin:74px auto 0; font-family:var(--display); font-size:49px; line-height:1.09; text-align:left; white-space:nowrap; }
 .hero h1 span,.approach h2 span,.services-section h2 span { display:block; color:var(--red); }
