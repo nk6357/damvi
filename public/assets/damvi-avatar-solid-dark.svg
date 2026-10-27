@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="27.5 -99.5 920 920" width="4096" height="4096" role="img" aria-label="Damvi avatar on solid dark background">
+  <rect x="27.5" y="-99.5" width="920" height="920" fill="#141414"/>
+  <g fill="#E63946" fill-rule="evenodd" clip-rule="evenodd">
+    <g transform="translate(-1725 -274)">
+      <path d="M1805 354H1933L2116 566V738L1930 547V663L1975 719V914H1805V354Z"/>
+      <path d="M2335 354H2465V915H2288V718L2338 661V549L2150 740V566L2335 354Z"/>
+    </g>
+    <path d="M780 80H895V195H780V80Z"/>
+  </g>
+</svg>
