@@ -11,7 +11,7 @@ button,a { -webkit-tap-highlight-color:transparent; }
 .hero-form { position:relative; padding:52px 45px 50px 70px; overflow:hidden; }
 .hero-logo { display:block; width:202px; height:auto; }
 .hero h1,.approach h2,.services-section h2,.works h2,.inner-header h1 { margin:0; font-family:var(--display); font-weight:900; letter-spacing:-.055em; text-transform:uppercase; }
-.hero h1 { font-family:Impact,"Arial Narrow","Arial Black",sans-serif; font-size:49px; line-height:1.09; margin-top:74px; max-width:555px; white-space:nowrap; }
+.hero h1 { font-family:var(--display); font-size:49px; line-height:1.09; margin-top:74px; max-width:555px; white-space:nowrap; }
 .hero h1 span,.approach h2 span,.services-section h2 span { display:block; color:var(--red); }
 .contact-form { width:523px; max-width:100%; margin-top:17px; }
 .contact-form textarea { display:block; resize:none; width:100%; height:172px; padding:16px; background:#fff; border:1px solid #b8b8b8; border-radius:3px; color:var(--text); outline:none; }
@@ -35,7 +35,7 @@ button,a { -webkit-tap-highlight-color:transparent; }
 .form-status.is-success { color:#0e6b34; }.form-status.is-error { color:#a21d2b; }
 .consent-note { margin:7px 0 0; font-size:11px; color:#777; }.consent-note a { text-underline-offset:2px; }
 .hero-brand { position:relative; overflow:hidden; color:var(--on-dark); background:var(--dark); }
-.hero-brand-title { position:relative; z-index:1; margin:83px 45px 0 51px; font-family:Impact,"Arial Narrow","Arial Black",sans-serif; font-size:58px; font-weight:900; line-height:1.03; letter-spacing:-.025em; white-space:nowrap; }
+.hero-brand-title { position:relative; z-index:1; margin:83px 45px 0 51px; font-family:var(--display); font-size:58px; font-weight:900; line-height:1.03; letter-spacing:-.025em; white-space:nowrap; }
 .hero-monogram { position:absolute; z-index:0; left:55px; top:442px; width:592px; height:auto; }
 .approach-copy { padding:191px 65px 60px 45px; }
 .approach h2 { font-size:54px; line-height:1.12; letter-spacing:-.064em; }
