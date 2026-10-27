@@ -11,7 +11,7 @@ button,a { -webkit-tap-highlight-color:transparent; }
 .hero-form { position:relative; display:flex; flex-direction:column; align-items:center; padding:52px 45px 50px 70px; overflow:hidden; }
 .hero-logo { display:block; align-self:flex-start; width:202px; height:auto; }
 .hero h1,.approach h2,.services-section h2,.works h2,.inner-header h1 { margin:0; font-family:var(--display); font-weight:900; letter-spacing:-.055em; text-transform:uppercase; }
-.hero h1 { width:max-content; max-width:100%; margin:74px auto 0; font-family:var(--display); font-size:49px; line-height:1.09; text-align:left; white-space:nowrap; }
+.hero h1 { width:max-content; max-width:100%; margin:74px auto 0; font-family:var(--display); font-size:54px; line-height:1.12; letter-spacing:-.064em; text-align:left; white-space:nowrap; }
 .hero h1 span,.approach h2 span,.services-section h2 span { display:block; color:var(--red); }
 .contact-form { width:523px; max-width:100%; margin-top:17px; }
 .contact-form textarea { display:block; resize:none; width:100%; height:172px; padding:16px; background:#fff; border:1px solid #b8b8b8; border-radius:3px; color:var(--text); outline:none; }
@@ -61,7 +61,7 @@ button,a { -webkit-tap-highlight-color:transparent; }
   .hero { min-height:720px; }
   .hero-form { padding:min(4.0625vw,52px) min(3.5156vw,45px) min(3.9063vw,50px) min(5.4688vw,70px); }
   .hero-logo { width:min(15.7813vw,202px); }
-  .hero h1 { margin-top:min(5.7813vw,74px); font-size:min(3.8281vw,49px); }
+  .hero h1 { margin-top:min(5.7813vw,74px); font-size:min(4.21875vw,54px); line-height:1.12; letter-spacing:-.064em; }
   .contact-form { width:min(40.8594vw,523px); margin-top:min(1.3281vw,17px); }
   .contact-form textarea { height:min(13.4375vw,172px); padding:min(1.25vw,16px); }
   .contact-fields { gap:min(3.4375vw,44px); margin-top:min(2.3438vw,30px); }
