@@ -17,6 +17,10 @@ const iconPhone = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.5
 const arrow = '<span class="process-arrow" aria-hidden="true">↓</span>';
 const escape = value => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 
+function siteNav() {
+  return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="DAMVI — на главную"><img src="/assets/damvi-logo-white.svg" alt="DAMVI" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/#approach">Подход</a><a href="/#services">Направления</a><a href="/projects">Наши работы</a><a class="nav-cta" href="/#discuss">Обсудить задачу</a></nav></div></header>`;
+}
+
 function footer() {
   const contacts = [
     config.contacts.email && `<a href="mailto:${escape(config.contacts.email)}">${escape(config.contacts.email)}</a>`,
@@ -27,7 +31,7 @@ function footer() {
 }
 
 function form() {
-  return `<form id="contact-form" class="contact-form" novalidate><label class="sr-only" for="problem">Опишите проблему</label><textarea id="problem" name="problem" aria-label="Опишите проблему" required minlength="50"></textarea><p class="field-error" id="problem-error" aria-live="polite"></p><div class="contact-fields"><div class="underlined-field"><label class="sr-only" for="contact">Telegram или email</label>${iconTelegram}<input id="contact" name="contact" autocomplete="email" placeholder="Telegram или email" required /></div><div class="underlined-field"><label class="sr-only" for="phone">Номер телефона</label>${iconPhone}<input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Номер телефона" required /></div></div><div class="contact-errors" aria-live="polite"><p id="contact-error"></p><p id="phone-error"></p></div><button class="button button-red" type="submit">Обсудить задачу</button><p class="form-status" id="form-status" aria-live="polite"></p><p class="consent-note">Отправляя форму, вы соглашаетесь с <a href="/privacy">политикой конфиденциальности</a>.</p></form>`;
+  return `<form id="contact-form" class="contact-form" novalidate><div class="form-head"><p>Расскажите о задаче</p><span>Начнём с проблемы, а не с готового решения</span></div><label class="sr-only" for="problem">Опишите проблему</label><textarea id="problem" name="problem" aria-label="Опишите проблему" placeholder="Что сейчас не работает или мешает бизнесу зарабатывать?" required minlength="50"></textarea><p class="field-error" id="problem-error" aria-live="polite"></p><div class="contact-fields"><div class="underlined-field"><label class="sr-only" for="contact">Telegram или email</label>${iconTelegram}<input id="contact" name="contact" autocomplete="email" placeholder="Telegram или email" required /></div><div class="underlined-field"><label class="sr-only" for="phone">Номер телефона</label>${iconPhone}<input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Номер телефона" required /></div></div><div class="contact-errors" aria-live="polite"><p id="contact-error"></p><p id="phone-error"></p></div><button class="button button-red" type="submit"><span>Обсудить задачу</span><span aria-hidden="true">↗</span></button><p class="form-status" id="form-status" aria-live="polite"></p><p class="consent-note">Отправляя форму, вы соглашаетесь с <a href="/privacy">политикой конфиденциальности</a>.</p></form>`;
 }
 
 function servicesRows(list, variant = '') {
@@ -37,10 +41,10 @@ function servicesRows(list, variant = '') {
 function home() {
   const first = config.services.slice(0, 3);
   const second = [...config.services.slice(3), { slug: 'other', display: 'ДРУГИЕ УСЛУГИ', price: '' }];
-  return `<section class="hero section-split" id="discuss"><div class="hero-form"><img class="hero-logo" src="/assets/damvi-logo-dark.svg" alt="DAMVI" /><h1><span>ОПИШИТЕ ПРОБЛЕМУ,</span>КОТОРАЯ МЕШАЕТ<br />ЗАРАБАТЫВАТЬ</h1>${form()}</div><div class="hero-brand"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>РАЗБИРАЕМСЯ</li>${arrow}<li>ПРОЕКТИРУЕМ</li>${arrow}<li>РЕАЛИЗУЕМ</li>${arrow}<li>ПОДДЕРЖИВАЕМ</li></ol></div></section><section class="services-section services-primary"><h2><span>ОСНОВНЫЕ</span>НАПРАВЛЕНИЯ</h2>${servicesRows(first)}</section><section class="services-section services-secondary">${servicesRows(second, 'compact')}</section><section class="works"><h2>НАШИ РАБОТЫ</h2><a class="button button-red" href="/projects">Посмотреть проекты</a></section>${footer()}`;
+  return `<section class="hero section-split" id="discuss"><div class="hero-form"><div class="hero-copy"><p class="section-label">Есть задача?</p><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><p class="section-label">DAMVI / DIGITAL</p><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · автоматизация · продвижение · поддержка</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /><a class="hero-scroll" href="#approach">Как мы работаем <span aria-hidden="true">↓</span></a></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><p class="section-label">Подход</p><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><p class="process-label">От задачи к результату</p><ol><li>РАЗБИРАЕМСЯ</li>${arrow}<li>ПРОЕКТИРУЕМ</li>${arrow}<li>РЕАЛИЗУЕМ</li>${arrow}<li>ПОДДЕРЖИВАЕМ</li></ol></div></section><section class="services-section services-primary" id="services"><div class="section-heading"><div><p class="section-label">Что делаем</p><h2><span>ОСНОВНЫЕ</span>НАПРАВЛЕНИЯ</h2></div><p>Подбираем набор инструментов под задачу бизнеса — от разработки до продвижения и поддержки.</p></div>${servicesRows(first)}</section><section class="services-section services-secondary">${servicesRows(second, 'compact')}</section><section class="works"><div><p class="section-label">Портфолио</p><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты будут собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span><span aria-hidden="true">↗</span></a></section>${footer()}`;
 }
 
-function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ') { return `<header class="inner-header"><a class="inner-logo" href="/" aria-label="На главную"><img src="/assets/damvi-logo-dark.svg" alt="DAMVI" /></a><p>${eyebrow}</p><h1>${escape(title)}</h1></header>`; }
+function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ') { return `<header class="inner-header"><p>${eyebrow}</p><h1>${escape(title)}</h1></header>`; }
 function servicePage(slug) {
   if (slug === 'other') return otherPage();
   const service = config.services.find(item => item.slug === slug);
@@ -55,8 +59,34 @@ function notFound() { return `${innerHeader('Страница не найден�
 function render() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   let content = path === '/' ? home() : path === '/projects' ? projectsPage() : path === '/privacy' ? privacyPage() : path.startsWith('/services/') ? servicePage(path.split('/').pop()) : notFound();
-  document.querySelector('#app').innerHTML = content;
+  document.querySelector('#app').innerHTML = `${siteNav()}<main>${content}</main>`;
+  setupNav();
   setupForm();
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target) requestAnimationFrame(() => target.scrollIntoView());
+  }
+}
+
+function setupNav() {
+  const nav = document.querySelector('#site-nav');
+  const toggle = nav?.querySelector('.nav-toggle');
+  if (!nav || !toggle) return;
+  const close = () => {
+    nav.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Открыть меню');
+    document.body.classList.remove('menu-open');
+  };
+  toggle.addEventListener('click', () => {
+    const opening = !nav.classList.contains('is-open');
+    nav.classList.toggle('is-open', opening);
+    toggle.setAttribute('aria-expanded', String(opening));
+    toggle.setAttribute('aria-label', opening ? 'Закрыть меню' : 'Открыть меню');
+    document.body.classList.toggle('menu-open', opening);
+  });
+  nav.querySelectorAll('a').forEach(link => link.addEventListener('click', close));
+  document.onkeydown = event => { if (event.key === 'Escape') close(); };
 }
 
 function validateClient(data) {
@@ -80,16 +110,16 @@ function setupForm() {
     const status = document.querySelector('#form-status');
     status.textContent = '';
     if (Object.keys(errors).length) return;
-    const button = formEl.querySelector('button'); button.disabled = true; button.textContent = 'Отправляем…';
+    const button = formEl.querySelector('button'); button.disabled = true; button.innerHTML = '<span>Отправляем…</span>';
     try {
       const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       const result = await response.json();
       if (!response.ok) { Object.entries(result.errors || {}).forEach(([key, message]) => { document.querySelector(`#${key}-error`).textContent = message; formEl.elements[key]?.setAttribute('aria-invalid', 'true'); }); throw new Error(result.message || 'Не удалось отправить заявку.'); }
       status.className = 'form-status is-success'; status.textContent = result.message; formEl.reset();
     } catch (error) { status.className = 'form-status is-error'; status.textContent = error.message; }
-    finally { button.disabled = false; button.textContent = 'Обсудить задачу'; }
+    finally { button.disabled = false; button.innerHTML = '<span>Обсудить задачу</span><span aria-hidden="true">↗</span>'; }
   });
 }
-document.addEventListener('click', event => { const link = event.target.closest('a[href^="/"]'); if (!link || event.metaKey || event.ctrlKey) return; event.preventDefault(); history.pushState({}, '', link.href); render(); window.scrollTo(0, 0); });
+document.addEventListener('click', event => { const link = event.target.closest('a[href^="/"]'); if (!link || event.metaKey || event.ctrlKey) return; event.preventDefault(); history.pushState({}, '', link.href); render(); if (!window.location.hash) window.scrollTo(0, 0); });
 window.addEventListener('popstate', render);
 render();
