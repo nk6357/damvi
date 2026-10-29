@@ -3,8 +3,8 @@ import { join } from 'node:path';
 
 const root = process.cwd();
 const read = path => readFile(join(root, path), 'utf8');
-const [html, css, js, logoDark, logoWhite, monogram, favicon, hosting] = await Promise.all([
-  read('public/index.html'), read('public/styles.css'), read('public/app.js'),
+const [html, css, js, otherServices, logoDark, logoWhite, monogram, favicon, hosting] = await Promise.all([
+  read('public/index.html'), read('public/styles.css'), read('public/app.js'), read('public/other-services.js'),
   read('public/assets/damvi-logo-dark.svg'), read('public/assets/damvi-logo-white.svg'),
   read('public/assets/damvi-m-dot-icon.svg'), read('public/assets/damvi-m-dot-icon-square.svg'),
   read('.openai/hosting.json')
@@ -15,6 +15,7 @@ const assets = {
   '/index.html': { body: html, type: 'text/html; charset=utf-8' },
   '/styles.css': { body: css, type: 'text/css; charset=utf-8' },
   '/app.js': { body: js, type: 'text/javascript; charset=utf-8' },
+  '/other-services.js': { body: otherServices, type: 'text/javascript; charset=utf-8' },
   '/assets/damvi-logo-dark.svg': { body: logoDark, type: 'image/svg+xml' },
   '/assets/damvi-logo-white.svg': { body: logoWhite, type: 'image/svg+xml' },
   '/assets/damvi-m-dot-icon.svg': { body: monogram, type: 'image/svg+xml' },
