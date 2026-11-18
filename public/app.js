@@ -183,10 +183,15 @@ function renderServiceSection(section) {
 }
 
 function serviceDetails(service) {
-  const telegram = new URL(config.contacts.telegram.url);
-  telegram.searchParams.set('text', `Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
+  const telegram = telegramDraft(`Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
   return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+}
+
+function telegramDraft(message) {
+  const url = new URL(config.contacts.telegram.url);
+  url.search = 'text=' + encodeURIComponent(message);
+  return url;
 }
 
 const goals = {
@@ -427,8 +432,7 @@ function setupForm() {
     status.className = 'form-status';
     if (showErrors(validateClient(data))) return;
     if (pages) {
-      const telegram = new URL(config.contacts.telegram.url);
-      telegram.searchParams.set('text', ['Здравствуйте! Хочу обсудить задачу.', '', data.problem, '', 'Контакт: ' + data.contact, 'Телефон: ' + data.phone].join('\n'));
+      const telegram = telegramDraft(['Здравствуйте! Хочу обсудить задачу.', '', data.problem, '', 'Контакт: ' + data.contact, 'Телефон: ' + data.phone].join('\n'));
       const link = document.createElement('a');
       link.href = telegram.href;
       link.target = '_blank';
