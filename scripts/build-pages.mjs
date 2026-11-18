@@ -1,4 +1,5 @@
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { otherServices } from '../public/other-services.js';
 
@@ -7,11 +8,14 @@ if (!/^(?:\/[a-zA-Z0-9._-]+)*$/.test(base)) throw new Error('Invalid Pages base 
 
 const output = 'dist/pages';
 await mkdir(output, { recursive: true });
-const [template, app] = await Promise.all([
+const [template, app, css] = await Promise.all([
   readFile('public/index.html', 'utf8'),
-  readFile('public/app.js', 'utf8')
+  readFile('public/app.js', 'utf8'),
+  readFile('public/styles.css')
 ]);
+const styleVersion = createHash('sha256').update(css).digest('hex').slice(0, 12);
 const html = template.replace(/((?:href|src)=")\/(?!\/)/g, '$1' + base + '/')
+  .replace('/styles.css"', '/styles.css?v=' + styleVersion + '"')
   .replace('</head>', '  <meta name="damvi-pages-base" content="' + base + '" />\n  </head>');
 
 const serviceSlugs = [
