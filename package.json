@@ -4,7 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node server.mjs",
+    "package:beget": "node scripts/package-beget.mjs",
+    "dev:beget": "php -S 127.0.0.1:4174 -t public beget-router.php",
+    "dev": "php -S 127.0.0.1:4174 -t public beget-router.php",
+    "dev:node": "node server.mjs",
     "start": "node server.mjs"
   }
 }

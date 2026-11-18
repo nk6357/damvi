@@ -18,14 +18,8 @@ const json = (res, status, body) => {
   res.end(JSON.stringify(body));
 };
 
-const isEmail = value => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(value);
-const isTelegram = value => /^@[a-zA-Z0-9_]{5,32}$/.test(value) || /^https?:\/\/(?:t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,32}\/?$/i.test(value);
-const normalizePhone = value => {
-  const digits = String(value || '').replace(/\D/g, '');
-  if (digits.length < 10 || digits.length > 15) return null;
-  if (digits.length === 11 && (digits.startsWith('8') || digits.startsWith('7'))) return `+7${digits.slice(1)}`;
-  return `+${digits}`;
-};
+const email = /^[\w!#$%&'*+\/=?^{}|~-]+(?:\.[\w!#$%&'*+\/=?^{}|~-]+)*@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
+const telegram = /^(?:@[a-z0-9_]{5,32}|(?:https?:\/\/)?(?:t\.me|telegram\.me)\/[a-z0-9_]{5,32}\/?)$/i;
 
 async function sendMail(payload) {
   const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } = process.env;
@@ -34,12 +28,13 @@ async function sendMail(payload) {
   }
   const text = [
     'Новая заявка с сайта DAMVI', '', `Проблема: ${payload.problem}`,
-    `Telegram / email: ${payload.contact}`, `Телефон: ${payload.phone}`
-  ].join('\n');
+    `Telegram / email: ${payload.contact}`
+  ];
+  if (payload.phone) text.push(`Телефон: ${payload.phone}`);
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: CONTACT_FROM_EMAIL, to: [CONTACT_TO_EMAIL], subject: 'Новая заявка DAMVI', text })
+    body: JSON.stringify({ from: CONTACT_FROM_EMAIL, to: [CONTACT_TO_EMAIL], subject: 'Новая заявка DAMVI', text: text.join('\n') })
   });
   if (!response.ok) throw new Error(`Mail transport returned ${response.status}`);
   return { configured: true };
@@ -53,18 +48,23 @@ async function handleContact(req, res) {
   }
   let body;
   try { body = JSON.parse(raw); } catch { return json(res, 400, { ok: false, message: 'Не удалось прочитать данные формы.' }); }
-  const problem = String(body.problem || '').trim();
-  const contact = String(body.contact || '').trim();
-  const phone = normalizePhone(body.phone);
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return json(res, 400, { ok: false });
+  if (body.website) return json(res, 422, { ok: false, message: 'Запрос отклонён.' });
+  const problem = typeof body.problem === 'string' ? body.problem.trim() : '';
+  const contact = typeof body.contact === 'string' ? body.contact.trim() : '';
+  const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
   const errors = {};
-  if (problem.length < 50) errors.problem = 'Опишите задачу подробнее: минимум 50 символов.';
-  if (!isEmail(contact) && !isTelegram(contact)) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
-  if (!phone) errors.phone = 'Укажите корректный номер телефона.';
+  if (!problem) errors.problem = 'Опишите задачу.';
+  else if ([...problem].length > 2500) errors.problem = 'Сократите описание до 2500 символов.';
+  if (!contact) errors.contact = 'Укажите, куда вам ответить.';
+  else if (contact.length > 254 || !(email.test(contact) || telegram.test(contact))) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
+  if (!phone || phone === '+7') errors.phone = 'Укажите номер для связи.';
+  else if (!/^\+7[0-9 ().-]{10,30}$/.test(phone) || !/^7\d{10}$/.test(phone.replace(/\D/g, ''))) errors.phone = 'Введите 10 цифр после +7.';
   if (Object.keys(errors).length) return json(res, 422, { ok: false, errors });
   try {
     const result = await sendMail({ problem, contact, phone });
     if (!result.configured) return json(res, 503, { ok: false, message: 'Приём заявок ещё не настроен. Подключите почтовый транспорт в переменных окружения.' });
-    return json(res, 200, { ok: true, message: 'Заявка отправлена. Мы свяжемся с вами.' });
+    return json(res, 200, { ok: true, message: 'Заявка отправлена. Напишем вам по указанному контакту' });
   } catch (error) {
     console.error('Email send failed:', error.message);
     return json(res, 502, { ok: false, message: 'Не удалось отправить заявку. Попробуйте ещё раз позже.' });
@@ -73,7 +73,10 @@ async function handleContact(req, res) {
 
 createServer(async (req, res) => {
   const url = new URL(req.url || '/', `http://${req.headers.host}`);
-  if (req.method === 'POST' && url.pathname === '/api/contact') return handleContact(req, res);
+  if (url.pathname === '/api/contact' || url.pathname === '/api/contact.php') {
+    if (req.method === 'POST') return handleContact(req, res);
+    return json(res, 405, { ok: false, message: 'Метод не поддерживается.' });
+  }
   if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { ok: false, message: 'Method not allowed.' });
   const requestPath = url.pathname === '/' ? '/index.html' : url.pathname;
   const candidate = normalize(join(publicDir, requestPath));

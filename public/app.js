@@ -1,5 +1,3 @@
-import { otherServices } from './other-services.js';
-
 const config = {
   contacts: { email: '', telegram: { label: '@nk6357', url: 'https://t.me/nk6357' }, phone: '' },
   services: [
@@ -112,19 +110,13 @@ const config = {
       cta: 'Обсудить запуск SEO-блога'
     }
   ],
-  otherServices,
+  otherServices: null,
   projects: [
     {
-      name: 'INSOL для разработчиков',
+      name: 'Сайт для B2B-компании Insol',
       type: 'Платформа верификации',
       description: 'Сайт сервиса INSOL AI Passport для верификации разработчиков и представления компетенций корпоративным клиентам.',
       url: 'https://insol-dvlp.ru'
-    },
-    {
-      name: 'INSOL для заказчиков',
-      type: 'Подбор AI-исполнителей',
-      description: 'Сервис подбора проверенных AI-разработчиков и интеграторов по компетенциям, технологиям, отрасли, бюджету и надёжности.',
-      url: 'https://insol-cst.ru'
     },
     {
       name: 'Кинкали',
@@ -135,71 +127,182 @@ const config = {
   ]
 };
 
-const iconTelegram = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.5 3.3 2.8 10.6c-1.3.5-1.2 1.3-.2 1.6l4.8 1.5 1.9 5.9c.2.6.1.8.7.8.4 0 .6-.2.8-.4l2.3-2.2 4.8 3.6c.9.5 1.5.2 1.7-.8L22.8 5c.4-1.3-.5-1.9-1.3-1.7ZM8.3 13.4l10.8-6.8c.5-.3.9-.1.5.3l-8.7 7.9-.3 3.3-2.3-4.7Z"/></svg>';
-const iconPhone = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 2.5 4.4 3.6c-.8.4-1.2 1.3-1 2.1C5 12.7 11.3 19 18.3 20.6c.8.2 1.7-.2 2.1-1l1.1-2.2c.3-.7.1-1.5-.6-1.9l-3.2-1.7c-.6-.3-1.4-.2-1.9.3l-1.2 1.2c-2.2-1.2-4-3-5.2-5.2l1.2-1.2c.5-.5.6-1.3.3-1.9L8.5 3.1a1.5 1.5 0 0 0-1.9-.6Z"/></svg>';
 const arrow = '<span class="process-arrow" aria-hidden="true">↓</span>';
 const escape = value => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 
 function siteNav() {
-  return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="DAMVI — на главную"><img src="/assets/damvi-logo-white.svg" alt="DAMVI" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/#services">Направления</a><a href="/projects">Наши работы</a><a class="nav-cta" href="/#discuss">Обсудить задачу</a></nav></div></header>`;
+  return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="DAMVI — на главную"><img src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/">Главная</a><a href="/#services">Наши услуги</a><a href="/projects">Наши работы</a><a class="nav-cta button-shine" href="/#contact-form">Обсудить задачу</a></nav></div></header>`;
 }
 
 function footer() {
   const contacts = [
     config.contacts.email && `<a href="mailto:${escape(config.contacts.email)}">${escape(config.contacts.email)}</a>`,
-    config.contacts.telegram && `<a href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">${escape(config.contacts.telegram.label)}</a>`,
+    config.contacts.telegram && `<a href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">Telegram</a>`,
     config.contacts.phone && `<a href="tel:${escape(config.contacts.phone.replace(/\s/g, ''))}">${escape(config.contacts.phone)}</a>`
   ].filter(Boolean).join('');
-  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img src="/assets/damvi-logo-white.svg" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div><nav aria-label="Услуги"><p class="footer-label">Направления</p>${config.services.map(s => `<a href="/services/${s.slug}">${escape(s.name)}</a>`).join('')}<a href="/services/other">Другие услуги</a></nav><nav aria-label="Разделы"><p class="footer-label">Разделы</p><a href="/projects">Наши работы</a><a href="/#discuss">Обсудить задачу</a><a href="/privacy">Политика конфиденциальности</a></nav>${contacts ? `<address>${contacts}</address>` : ''}</div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
+  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div><nav aria-label="Услуги"><p class="footer-label">Направления</p>${config.services.map(s => `<a href="/services/${s.slug}">${escape(s.name)}</a>`).join('')}<a href="/services/other">Другие услуги</a></nav><nav aria-label="Разделы"><p class="footer-label">Разделы</p><a href="/projects">Наши работы</a><a href="/#discuss">Обсудить задачу</a><a href="/privacy">Политика конфиденциальности</a></nav>${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}</div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
 }
 
 function form() {
-  return `<form id="contact-form" class="contact-form" novalidate><label class="sr-only" for="problem">Опишите проблему</label><textarea id="problem" name="problem" aria-label="Опишите проблему" placeholder="Что сейчас не работает или мешает бизнесу зарабатывать?" required minlength="50"></textarea><p class="field-error" id="problem-error" aria-live="polite"></p><div class="contact-fields"><div class="underlined-field"><label class="sr-only" for="contact">Telegram или email</label>${iconTelegram}<input id="contact" name="contact" autocomplete="email" placeholder="Telegram или email" required /></div><div class="underlined-field"><label class="sr-only" for="phone">Номер телефона</label>${iconPhone}<input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="Номер телефона" required /></div></div><div class="contact-errors" aria-live="polite"><p id="contact-error"></p><p id="phone-error"></p></div><button class="button button-red" type="submit"><span>Обсудить задачу</span><span aria-hidden="true">↗</span></button><p class="form-status" id="form-status" aria-live="polite"></p><p class="consent-note">Отправляя форму, вы соглашаетесь с <a href="/privacy">политикой конфиденциальности</a>.</p></form>`;
+  return `<form id="contact-form" class="contact-form" novalidate>
+    <div class="form-field">
+      <label for="problem">Опишите, что мешает бизнесу зарабатывать</label>
+      <textarea id="problem" name="problem" placeholder="Например, заявки с сайта теряются, а менеджеры вручную переносят их в CRM" aria-describedby="problem-error" required></textarea>
+      <p class="field-error" id="problem-error" aria-live="polite"></p>
+    </div>
+    <div class="form-field">
+      <label for="contact">Куда вам ответить?</label>
+      <input id="contact" name="contact" autocapitalize="none" spellcheck="false" placeholder="@username или email" aria-describedby="contact-error" required />
+      <p class="field-error" id="contact-error" aria-live="polite"></p>
+    </div>
+    <div class="form-field">
+      <label for="phone">Номер для связи</label>
+      <input id="phone" name="phone" type="tel" autocomplete="tel" value="+7" aria-describedby="phone-error" required />
+      <p class="field-error" id="phone-error" aria-live="polite"></p>
+    </div>
+    <button class="button button-red button-shine" type="submit"><span class="form-submit-label">Обсудить задачу</span></button>
+    <p class="form-status" id="form-status" role="status"></p>
+    <div class="form-notes">
+      <p class="consent-note">Нажимая кнопку «Обсудить задачу», вы соглашаетесь с <a href="/privacy">политикой конфиденциальности</a>.</p>
+    </div>
+  </form>`;
 }
 
 function servicesRows(list, variant = '') {
   return list.map(service => `<article class="service-row ${variant}"><h3>${escape(service.display)}</h3><p class="service-price">${service.price ? escape(service.price) : ''}</p><a class="button button-red" href="/services/${escape(service.slug)}">Подробнее</a></article>`).join('');
 }
 
-function renderServiceSection(section, index) {
+function renderServiceSection(section) {
   const paragraphs = (section.paragraphs || []).map(paragraph => `<p>${escape(paragraph)}</p>`).join('');
-  const items = (section.items || []).length ? `<ol class="service-detail-list">${section.items.map(([title, text], itemIndex) => `<li><span>${String(index + 1).padStart(2, '0')}.${String(itemIndex + 1).padStart(2, '0')}</span><div><h4>${escape(title)}</h4><p>${escape(text)}</p></div></li>`).join('')}</ol>` : '';
-  return `<article class="service-detail-section"><p class="service-detail-number">${String(index + 1).padStart(2, '0')}</p><div><h3>${escape(section.title)}</h3>${paragraphs}${items}</div></article>`;
+  const items = (section.items || []).length ? `<ol class="service-detail-list">${section.items.map(([title, text]) => `<li><div><h4>${escape(title)}</h4><p>${escape(text)}</p></div></li>`).join('')}</ol>` : '';
+  return `<article class="service-detail-section"><div><h3>${escape(section.title)}</h3>${paragraphs}${items}</div></article>`;
 }
 
 function serviceDetails(service) {
+  const telegram = new URL(config.contacts.telegram.url);
+  telegram.searchParams.set('text', `Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
-  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2>${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3><p>Напишите в Telegram — ответим на вопросы и предложим следующий шаг.</p></div><a class="button button-red" href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">${escape(config.contacts.telegram.label)} <span aria-hidden="true">↗</span></a></div></section>`;
+  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2>${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+}
+
+const goals = {
+  'more-clients': {
+    title: 'Хочу больше клиентов',
+    description: 'Поможем клиентам найти вас, а посетителям сайта — сделать следующий шаг: оставить заявку или оформить заказ.',
+    services: ['geo', 'seo', 'seo-blog', 'web-analytics', 'conversion-optimization', 'web-design', 'product-infographics', 'video-editing', 'ai-video']
+  },
+  'less-manual-work': {
+    title: 'Хочу меньше ручной работы',
+    description: 'Автоматизируем рутину, свяжем ваши системы и освободим время команды для работы с клиентами.',
+    services: ['ai-automation', 'chatbots', 'custom-crm', 'integrations', 'data-parsers']
+  },
+  'launch-product': {
+    title: 'Хочу запустить цифровой продукт',
+    description: 'Поможем проверить идею и выпустить то, чем смогут пользоваться клиенты: сайт, приложение или онлайн-сервис.',
+    services: ['websites', 'mvp-prototypes', 'web-apps', 'mobile-apps', 'mini-apps', 'desktop-apps']
+  }
+};
+
+function businessGoals() {
+  const cards = Object.entries(goals).map(([slug, goal]) => `<article class="goal-card">
+    <h3 id="goal-${slug}">${escape(goal.title)}</h3>
+    <a class="button button-red" href="/goals/${slug}" aria-labelledby="goal-link-${slug} goal-${slug}"><span id="goal-link-${slug}">Посмотреть решение</span></a>
+  </article>`).join('');
+  return `<section class="services-section business-goals" id="services"><h2>Что требуется вашему бизнесу?</h2><div class="goals-grid">${cards}</div></section>`;
+}
+
+function goalPage(slug) {
+  const goal = Object.hasOwn(goals, slug) ? goals[slug] : null;
+  if (!goal) return notFound();
+  const catalog = [...config.services, ...config.otherServices];
+  const services = goal.services.map(id => catalog.find(service => service.slug === id));
+  return `${innerHeader(goal.title, 'ЗАДАЧА БИЗНЕСА', '/#services')}<section class="services-section goal-solutions">
+    <div class="section-heading"><div><h2>Подходящие решения</h2></div><div class="section-heading-copy">
+      <p>${escape(goal.description)}</p>
+      <p>Цены с пометкой «от» — минимальная стоимость входа в разработку или продвижение.</p>
+    </div></div>${servicesRows(services)}
+  </section>${footer()}`;
 }
 
 function home() {
-  const first = config.services.slice(0, 3);
-  const second = [...config.services.slice(3), { slug: 'other', display: 'ДРУГИЕ УСЛУГИ', price: '' }];
-  return `<section class="hero section-split" id="discuss"><div class="hero-form"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>РАЗБИРАЕМСЯ</li>${arrow}<li>ПРОЕКТИРУЕМ</li>${arrow}<li>РЕАЛИЗУЕМ</li>${arrow}<li>ПОДДЕРЖИВАЕМ</li></ol></div></section><section class="services-section services-primary" id="services"><div class="section-heading"><div><h2><span>ОСНОВНЫЕ</span>НАПРАВЛЕНИЯ</h2></div><div class="section-heading-copy"><p>Подбираем набор инструментов под задачу бизнеса — от разработки до продвижения и поддержки.</p><p>Цены с пометкой «от» — минимальная стоимость входа в разработку или продвижение.</p></div></div>${servicesRows(first)}</section><section class="services-section services-secondary">${servicesRows(second, 'compact')}</section><section class="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты будут собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span><span aria-hidden="true">↗</span></a></section>${footer()}`;
+  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты будут собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${footer()}`;
 }
 
-function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ') { return `<header class="inner-header">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1>${escape(title)}</h1></header>`; }
+function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ', backHref) {
+  const back = backHref ? `<nav class="service-back" aria-label="Навигация направления"><a class="button button-red button-back" href="${escape(backHref)}">Назад</a></nav>` : '';
+  return `<header class="inner-header${backHref ? ' inner-header-with-back' : ''}">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1>${escape(title)}</h1>${back}</header>`;
+}
 function servicePage(slug) {
   if (slug === 'other') return otherPage();
-  const service = [...config.services, ...config.otherServices].find(item => item.slug === slug || item.aliases?.includes(slug));
+  const service = [...config.services, ...(config.otherServices ?? [])].find(item => item.slug === slug || item.aliases?.includes(slug));
   if (!service) return notFound();
-  return `${innerHeader(service.name)}${serviceDetails(service)}${footer()}`;
+  const parent = config.otherServices?.includes(service) ? '/services/other' : '/#services';
+  return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent)}${serviceDetails(service)}${footer()}`;
 }
-function otherPage() { return `${innerHeader('Другие направления')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2><span>ДРУГИЕ</span>НАПРАВЛЕНИЯ</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
-function projectsPage() { return `${innerHeader('Наши работы', '')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2><span>НАШИ</span>РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map((project, index) => `<article class="project-card"><p class="project-index">${String(index + 1).padStart(2, '0')}</p><p class="project-type">${escape(project.type)}</p><h3>${escape(project.name)}</h3><p>${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект <span aria-hidden="true">↗</span></a></article>`).join('')}</div></section>${footer()}`; }
-function privacyPage() { return `${innerHeader('Политика конфиденциальности', 'ДОКУМЕНТ')}<section class="content-placeholder"><p>Текст политики будет добавлен владельцем сайта.</p></section>${footer()}`; }
-function notFound() { return `${innerHeader('Страница не найдена', '404')}<section class="empty-state"><a class="button button-red" href="/">На главную</a></section>${footer()}`; }
+function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2><span>ДРУГИЕ</span>НАПРАВЛЕНИЯ</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
+function projectsPage() { return `${innerHeader('Наши работы', '', '/#works')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3>${escape(project.name)}</h3><p>${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
+function privacyPage() { return `${innerHeader('Политика конфиденциальности', 'ДОКУМЕНТ', '/#discuss')}<section class="content-placeholder"><p>Текст политики будет добавлен владельцем сайта.</p></section>${footer()}`; }
+function notFound() { return `${innerHeader('Страница не найдена', '404', '/')}<section class="empty-state"><a class="button button-red" href="/">На главную</a></section>${footer()}`; }
 
-function render() {
+let renderVersion = 0;
+let renderedPath;
+async function render() {
+  const version = ++renderVersion;
   const path = window.location.pathname.replace(/\/$/, '') || '/';
-  let content = path === '/' ? home() : path === '/projects' ? projectsPage() : path === '/privacy' ? privacyPage() : path.startsWith('/services/') ? servicePage(path.split('/').pop()) : notFound();
-  document.querySelector('#app').innerHTML = `${siteNav()}<main>${content}</main>`;
-  setupNav();
-  setupForm();
-  if (window.location.hash) {
-    const target = document.querySelector(window.location.hash);
-    if (target) requestAnimationFrame(() => target.scrollIntoView());
+  const main = document.querySelector('#page-content');
+  if (path === renderedPath) return;
+  const slug = path.split('/').pop();
+  const isGoal = /^\/goals\/[^/]+$/.test(path);
+  const isService = path.startsWith('/services/');
+  const needsCatalog = (isGoal && Object.hasOwn(goals, slug)) ||
+    (isService && !config.services.some(service => service.slug === slug || service.aliases?.includes(slug)));
+  if (needsCatalog && !config.otherServices) {
+    try {
+      const { otherServices } = await import('./other-services.js');
+      config.otherServices = otherServices;
+    } catch {
+      if (version === renderVersion) {
+        main.innerHTML = '<section class="empty-state"><p>Не удалось загрузить направление.</p><button class="button button-red" type="button">Повторить</button></section>';
+        main.querySelector('button').onclick = () => location.reload();
+        renderedPath = undefined;
+        setupProcess();
+      }
+      return;
+    }
+    if (version !== renderVersion) return;
   }
+  let content = path === '/' ? home() : path === '/projects' ? projectsPage() : path === '/privacy' ? privacyPage() : isGoal ? goalPage(slug) : isService ? servicePage(slug) : notFound();
+  main.innerHTML = content;
+  renderedPath = path;
+  setupForm();
+  setupProcess();
+}
+
+async function renderAtPosition(state, behavior = 'instant') {
+  const rendered = render();
+  const version = renderVersion;
+  await rendered;
+  if (version !== renderVersion) return;
+  if (state?.damviScroll) {
+    const { x, y } = state.damviScroll;
+    window.scrollTo({ left: x, top: y, behavior: 'instant' });
+  } else if (location.hash) {
+    document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior });
+  } else {
+    window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+  }
+}
+
+let processObserver;
+function setupProcess() {
+  processObserver?.disconnect();
+  const process = document.querySelector('.process');
+  if (!process || !('IntersectionObserver' in window)) return;
+  process.classList.add('process-animated');
+  processObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => entry.target.classList.toggle('is-visible', entry.isIntersecting));
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
+  process.querySelectorAll('li, .process-arrow').forEach(item => processObserver.observe(item));
 }
 
 function setupNav() {
@@ -225,35 +328,126 @@ function setupNav() {
 
 function validateClient(data) {
   const errors = {};
-  if (data.problem.trim().length < 50) errors.problem = 'Опишите задачу подробнее: минимум 50 символов.';
-  if (!(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i.test(data.contact) || /^@[a-zA-Z0-9_]{5,32}$/.test(data.contact) || /^https?:\/\/(?:t\.me|telegram\.me)\/[a-zA-Z0-9_]{5,32}\/?$/i.test(data.contact))) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
-  const digits = data.phone.replace(/\D/g, '');
-  if (digits.length < 10 || digits.length > 15) errors.phone = 'Укажите корректный номер телефона.';
+  if (!data.problem) errors.problem = 'Опишите задачу.';
+  else if ([...data.problem].length > 2500) errors.problem = 'Сократите описание до 2500 символов.';
+  const email = /^[\w!#$%&'*+\/=?^{}|~-]+(?:\.[\w!#$%&'*+\/=?^{}|~-]+)*@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
+  const telegram = /^(?:@[a-z0-9_]{5,32}|(?:https?:\/\/)?(?:t\.me|telegram\.me)\/[a-z0-9_]{5,32}\/?)$/i;
+  if (!data.contact) errors.contact = 'Укажите, куда вам ответить.';
+  else if (data.contact.length > 254 || !(email.test(data.contact) || telegram.test(data.contact))) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
+  if (!data.phone || data.phone === '+7') errors.phone = 'Укажите номер для связи.';
+  else if (!/^\+7[0-9 ().-]{10,30}$/.test(data.phone) || !/^7\d{10}$/.test(data.phone.replace(/\D/g, ''))) errors.phone = 'Введите 10 цифр после +7.';
   return errors;
 }
 function setupForm() {
   const formEl = document.querySelector('#contact-form');
   if (!formEl) return;
+  const problem = formEl.elements.problem;
+  formEl.addEventListener('pointerdown', event => {
+    if (event.target === problem || event.target.closest('input, button, a, label')) return;
+    const rect = problem.getBoundingClientRect();
+    if (event.clientX >= rect.left - 6 && event.clientX <= rect.right + 6 && event.clientY >= rect.top - 6 && event.clientY <= rect.bottom + 6) {
+      event.preventDefault();
+      problem.focus();
+    }
+  });
+  const trap = document.createElement('input');
+  trap.name = 'website'; trap.tabIndex = -1; trap.autocomplete = 'off'; trap.className = 'sr-only'; trap.setAttribute('aria-hidden', 'true'); formEl.append(trap);
+  const button = formEl.querySelector('button[type="submit"]');
+  const buttonLabel = button.querySelector('.form-submit-label');
+  const status = formEl.querySelector('#form-status');
   const phone = formEl.elements.phone;
-  phone.addEventListener('input', () => { const raw = phone.value.replace(/\D/g, '').slice(0, 11); if (raw.length <= 1) phone.value = raw; else if (raw.length <= 4) phone.value = `+${raw[0] === '8' ? '7' : raw[0]} (${raw.slice(1)}`; else if (raw.length <= 7) phone.value = `+${raw[0] === '8' ? '7' : raw[0]} (${raw.slice(1, 4)}) ${raw.slice(4)}`; else phone.value = `+${raw[0] === '8' ? '7' : raw[0]} (${raw.slice(1, 4)}) ${raw.slice(4, 7)}-${raw.slice(7, 9)}${raw.length > 9 ? `-${raw.slice(9, 11)}` : ''}`; });
+  const placeCaretAfterPrefix = () => {
+    if (!phone.value) phone.value = '+7';
+    if (phone.value === '+7') phone.setSelectionRange(2, 2);
+  };
+  phone.addEventListener('focus', placeCaretAfterPrefix);
+  phone.addEventListener('click', placeCaretAfterPrefix);
+  phone.addEventListener('input', () => {
+    const digits = phone.value.replace(/\D/g, '');
+    const hasPrefix = phone.value.startsWith('+7') || (/^[78]/.test(digits) && digits.length === 11);
+    const number = (hasPrefix ? digits.slice(1) : digits).slice(0, 10);
+    let value = '+7';
+    if (number) value += ' (' + number.slice(0, 3);
+    if (number.length > 3) value += ') ' + number.slice(3, 6);
+    if (number.length > 6) value += '-' + number.slice(6, 8);
+    if (number.length > 8) value += '-' + number.slice(8);
+    phone.value = value;
+  });
+
+  function showErrors(errors) {
+    let firstInvalid;
+    for (const key of ['problem', 'contact', 'phone']) {
+      const message = errors[key] || '';
+      const field = formEl.elements[key];
+      formEl.querySelector('#' + key + '-error').textContent = message;
+      field.setAttribute('aria-invalid', String(Boolean(message)));
+      if (message && !firstInvalid) firstInvalid = field;
+    }
+    firstInvalid?.focus();
+    return Boolean(firstInvalid);
+  }
+
   formEl.addEventListener('submit', async event => {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(formEl));
-    const errors = validateClient(data);
-    ['problem', 'contact', 'phone'].forEach(key => { document.querySelector(`#${key}-error`).textContent = errors[key] || ''; formEl.elements[key].setAttribute('aria-invalid', String(Boolean(errors[key]))); });
-    const status = document.querySelector('#form-status');
+    if (button.disabled) return;
+    const data = {
+      problem: formEl.elements.problem.value.trim(),
+      contact: formEl.elements.contact.value.trim(),
+      phone: formEl.elements.phone.value.trim(),
+      website: trap.value
+    };
     status.textContent = '';
-    if (Object.keys(errors).length) return;
-    const button = formEl.querySelector('button'); button.disabled = true; button.innerHTML = '<span>Отправляем…</span>';
+    status.className = 'form-status';
+    if (showErrors(validateClient(data))) return;
+    button.disabled = true;
+    buttonLabel.textContent = 'Отправляем…';
+    const fallback = 'Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram @nk6357.';
     try {
-      const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-      const result = await response.json();
-      if (!response.ok) { Object.entries(result.errors || {}).forEach(([key, message]) => { document.querySelector(`#${key}-error`).textContent = message; formEl.elements[key]?.setAttribute('aria-invalid', 'true'); }); throw new Error(result.message || 'Не удалось отправить заявку.'); }
-      status.className = 'form-status is-success'; status.textContent = result.message; formEl.reset();
-    } catch (error) { status.className = 'form-status is-error'; status.textContent = error.message; }
-    finally { button.disabled = false; button.innerHTML = '<span>Обсудить задачу</span><span aria-hidden="true">↗</span>'; }
+      const response = await fetch('/api/contact.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      const result = await response.json().catch(() => null);
+      if (!response.ok || result?.ok !== true) {
+        if (!showErrors(result?.errors || {})) {
+          status.classList.add('is-error');
+          status.textContent = result?.message || fallback;
+        }
+        return;
+      }
+      formEl.style.minHeight = formEl.offsetHeight + 'px';
+      formEl.classList.add('is-sent');
+      formEl.innerHTML = `<div class="form-confirmation" tabindex="-1">
+        <svg class="form-confirmation-check" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M15 33l11 11 23-25" pathLength="1" />
+        </svg>
+        <p><strong>Заявка отправлена</strong></p>
+        <p>Напишем вам по указанному контакту.</p>
+      </div>`;
+      formEl.querySelector('.form-confirmation').focus({ preventScroll: true });
+    } catch {
+      status.classList.add('is-error');
+      status.textContent = fallback;
+    } finally {
+      button.disabled = false;
+      buttonLabel.textContent = 'Обсудить задачу';
+    }
   });
 }
-document.addEventListener('click', event => { const link = event.target.closest('a[href^="/"]'); if (!link || event.metaKey || event.ctrlKey) return; event.preventDefault(); history.pushState({}, '', link.href); render(); if (!window.location.hash) window.scrollTo(0, 0); });
-window.addEventListener('popstate', render);
-render();
+history.scrollRestoration = 'manual';
+document.addEventListener('click', event => {
+  const link = event.target.closest('a[href^="/"]');
+  if (!link || link.origin !== location.origin || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  event.preventDefault();
+  history.replaceState({ ...history.state, damviScroll: { x: scrollX, y: scrollY } }, '');
+  if (link.matches('.button-back') && history.state?.damviReturn) {
+    history.back();
+    return;
+  }
+  const samePage = link.pathname === location.pathname;
+  if (link.href !== location.href) {
+    history.pushState({ damviReturn: !samePage || history.state?.damviReturn === true }, '', link.href);
+  }
+  renderAtPosition(null, samePage ? 'auto' : 'instant');
+});
+window.addEventListener('popstate', event => renderAtPosition(event.state));
+document.querySelector('#app').innerHTML = `${siteNav()}<main id="page-content"></main>`;
+setupNav();
+renderAtPosition(history.state);
