@@ -130,6 +130,10 @@ const config = {
 const arrow = '<span class="process-arrow" aria-hidden="true">↓</span>';
 const escape = value => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 
+const pages = document.querySelector('meta[name="damvi-pages-base"]');
+const basePath = pages?.content || '';
+const withBasePath = html => basePath ? html.replace(/(\b(?:href|src)=")\/(?!\/)/g, '$1' + basePath + '/') : html;
+
 function siteNav() {
   return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="DAMVI — на главную"><img src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/">Главная</a><a href="/#services">Наши услуги</a><a href="/projects">Наши работы</a><a class="nav-cta button-shine" href="/#contact-form">Обсудить задачу</a></nav></div></header>`;
 }
@@ -140,7 +144,7 @@ function footer() {
     config.contacts.telegram && `<a href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">Telegram</a>`,
     config.contacts.phone && `<a href="tel:${escape(config.contacts.phone.replace(/\s/g, ''))}">${escape(config.contacts.phone)}</a>`
   ].filter(Boolean).join('');
-  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div><nav aria-label="Услуги"><p class="footer-label">Направления</p>${config.services.map(s => `<a href="/services/${s.slug}">${escape(s.name)}</a>`).join('')}<a href="/services/other">Другие услуги</a></nav><nav aria-label="Разделы"><p class="footer-label">Разделы</p><a href="/projects">Наши работы</a><a href="/#discuss">Обсудить задачу</a><a href="/privacy">Политика конфиденциальности</a></nav>${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}</div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
+  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div>${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}</div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
 }
 
 function form() {
@@ -169,7 +173,7 @@ function form() {
 }
 
 function servicesRows(list, variant = '') {
-  return list.map(service => `<article class="service-row ${variant}"><h3>${escape(service.display)}</h3><p class="service-price">${service.price ? escape(service.price) : ''}</p><a class="button button-red" href="/services/${escape(service.slug)}">Подробнее</a></article>`).join('');
+  return list.map(service => `<article class="service-row ${variant}"><h3 class="direction-title">${escape(service.name)}</h3><p class="service-price">${service.price ? escape(service.price) : ''}</p><a class="button button-red" href="/services/${escape(service.slug)}">Подробнее</a></article>`).join('');
 }
 
 function renderServiceSection(section) {
@@ -182,14 +186,14 @@ function serviceDetails(service) {
   const telegram = new URL(config.contacts.telegram.url);
   telegram.searchParams.set('text', `Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
-  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2>${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
 }
 
 const goals = {
   'more-clients': {
     title: 'Хочу больше клиентов',
     description: 'Поможем клиентам найти вас, а посетителям сайта — сделать следующий шаг: оставить заявку или оформить заказ.',
-    services: ['geo', 'seo', 'seo-blog', 'web-analytics', 'conversion-optimization', 'web-design', 'product-infographics', 'video-editing', 'ai-video']
+    services: ['geo', 'seo', 'seo-blog', 'web-analytics', 'conversion-optimization', 'web-design', 'data-parsers']
   },
   'less-manual-work': {
     title: 'Хочу меньше ручной работы',
@@ -199,7 +203,7 @@ const goals = {
   'launch-product': {
     title: 'Хочу запустить цифровой продукт',
     description: 'Поможем проверить идею и выпустить то, чем смогут пользоваться клиенты: сайт, приложение или онлайн-сервис.',
-    services: ['websites', 'mvp-prototypes', 'web-apps', 'mobile-apps', 'mini-apps', 'desktop-apps']
+    services: ['websites', 'chatbots', 'mvp-prototypes', 'web-apps', 'mobile-apps', 'mini-apps', 'desktop-apps']
   }
 };
 
@@ -216,7 +220,7 @@ function goalPage(slug) {
   if (!goal) return notFound();
   const catalog = [...config.services, ...config.otherServices];
   const services = goal.services.map(id => catalog.find(service => service.slug === id));
-  return `${innerHeader(goal.title, 'ЗАДАЧА БИЗНЕСА', '/#services')}<section class="services-section goal-solutions">
+  return `${innerHeader(goal.title, 'ЗАДАЧА БИЗНЕСА', '/#services', 'direction-title')}<section class="services-section goal-solutions">
     <div class="section-heading"><div><h2>Подходящие решения</h2></div><div class="section-heading-copy">
       <p>${escape(goal.description)}</p>
       <p>Цены с пометкой «от» — минимальная стоимость входа в разработку или продвижение.</p>
@@ -225,22 +229,22 @@ function goalPage(slug) {
 }
 
 function home() {
-  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты будут собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${footer()}`;
+  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${footer()}`;
 }
 
-function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ', backHref) {
+function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ', backHref, headingClass = '') {
   const back = backHref ? `<nav class="service-back" aria-label="Навигация направления"><a class="button button-red button-back" href="${escape(backHref)}">Назад</a></nav>` : '';
-  return `<header class="inner-header${backHref ? ' inner-header-with-back' : ''}">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1>${escape(title)}</h1>${back}</header>`;
+  return `<header class="inner-header${backHref ? ' inner-header-with-back' : ''}">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1 class="${headingClass}">${escape(title)}</h1>${back}</header>`;
 }
 function servicePage(slug) {
   if (slug === 'other') return otherPage();
   const service = [...config.services, ...(config.otherServices ?? [])].find(item => item.slug === slug || item.aliases?.includes(slug));
   if (!service) return notFound();
   const parent = config.otherServices?.includes(service) ? '/services/other' : '/#services';
-  return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent)}${serviceDetails(service)}${footer()}`;
+  return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent, 'direction-title')}${serviceDetails(service)}${footer()}`;
 }
-function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2><span>ДРУГИЕ</span>НАПРАВЛЕНИЯ</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
-function projectsPage() { return `${innerHeader('Наши работы', '', '/#works')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3>${escape(project.name)}</h3><p>${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
+function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services', 'direction-title')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2 class="direction-title">Другие направления</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
+function projectsPage() { return `${innerHeader('Наши работы', '', '/#works')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
 function privacyPage() { return `${innerHeader('Политика конфиденциальности', 'ДОКУМЕНТ', '/#discuss')}<section class="content-placeholder"><p>Текст политики будет добавлен владельцем сайта.</p></section>${footer()}`; }
 function notFound() { return `${innerHeader('Страница не найдена', '404', '/')}<section class="empty-state"><a class="button button-red" href="/">На главную</a></section>${footer()}`; }
 
@@ -248,7 +252,7 @@ let renderVersion = 0;
 let renderedPath;
 async function render() {
   const version = ++renderVersion;
-  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  const path = window.location.pathname.slice(basePath.length).replace(/\/$/, '') || '/';
   const main = document.querySelector('#page-content');
   if (path === renderedPath) return;
   const slug = path.split('/').pop();
@@ -272,10 +276,33 @@ async function render() {
     if (version !== renderVersion) return;
   }
   let content = path === '/' ? home() : path === '/projects' ? projectsPage() : path === '/privacy' ? privacyPage() : isGoal ? goalPage(slug) : isService ? servicePage(slug) : notFound();
-  main.innerHTML = content;
+  main.innerHTML = withBasePath(content);
   renderedPath = path;
   setupForm();
   setupProcess();
+  setupProjectCards();
+}
+
+let projectCardObserver;
+function setupProjectCards() {
+  projectCardObserver?.disconnect();
+  const descriptions = document.querySelectorAll('.project-description');
+  if (!descriptions.length) return;
+
+  function fit(description) {
+    let size = 17;
+    description.style.fontSize = size + 'px';
+    while (size > 14 && description.scrollHeight > description.clientHeight + 1) {
+      description.style.fontSize = --size + 'px';
+    }
+    description.tabIndex = description.scrollHeight > description.clientHeight + 1 ? 0 : -1;
+  }
+
+  descriptions.forEach(fit);
+  if ('ResizeObserver' in window) {
+    projectCardObserver = new ResizeObserver(entries => entries.forEach(entry => fit(entry.target)));
+    descriptions.forEach(description => projectCardObserver.observe(description));
+  }
 }
 
 async function renderAtPosition(state, behavior = 'instant') {
@@ -399,6 +426,18 @@ function setupForm() {
     status.textContent = '';
     status.className = 'form-status';
     if (showErrors(validateClient(data))) return;
+    if (pages) {
+      const telegram = new URL(config.contacts.telegram.url);
+      telegram.searchParams.set('text', ['Здравствуйте! Хочу обсудить задачу.', '', data.problem, '', 'Контакт: ' + data.contact, 'Телефон: ' + data.phone].join('\n'));
+      const link = document.createElement('a');
+      link.href = telegram.href;
+      link.target = '_blank';
+      link.rel = 'noreferrer';
+      link.textContent = 'откройте черновик в Telegram';
+      status.append('Готово к отправке. ', link, ' и отправьте сообщение.');
+      link.focus({ preventScroll: true });
+      return;
+    }
     button.disabled = true;
     buttonLabel.textContent = 'Отправляем…';
     const fallback = 'Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram @nk6357.';
@@ -448,6 +487,6 @@ document.addEventListener('click', event => {
   renderAtPosition(null, samePage ? 'auto' : 'instant');
 });
 window.addEventListener('popstate', event => renderAtPosition(event.state));
-document.querySelector('#app').innerHTML = `${siteNav()}<main id="page-content"></main>`;
+document.querySelector('#app').innerHTML = withBasePath(`${siteNav()}<main id="page-content"></main>`);
 setupNav();
 renderAtPosition(history.state);
