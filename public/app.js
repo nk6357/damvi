@@ -265,7 +265,7 @@ function servicePage(slug) {
   return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent, 'direction-title')}${serviceDetails(service)}${footer()}`;
 }
 function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services', 'direction-title')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2 class="direction-title">Другие направления</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
-function projectsPage() { return `${innerHeader('Наши работы', '', '/#works')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
+function projectsPage() { return `${innerHeader('Наши работы', '', '/#works', 'direction-title')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
 function legalPage(doc) {
   const paragraphs = doc.text.split(/\n/).filter(Boolean).slice(1).map(line => {
     const tag = /^\d+\.\s/.test(line) ? 'h2' : 'p';
@@ -315,42 +315,91 @@ async function render() {
   setupForm();
   setupProcess();
   setupProjectCards();
+  setupButtonShine();
 }
 
 let projectCardObserver;
+let projectFitFrame;
 function setupProjectCards() {
   projectCardObserver?.disconnect();
+  cancelAnimationFrame(projectFitFrame);
+  projectFitFrame = undefined;
   const descriptions = document.querySelectorAll('.project-description');
   if (!descriptions.length) return;
-
-  function fit(description) {
-    let size = 17;
-    description.style.fontSize = size + 'px';
-    while (size > 14 && description.scrollHeight > description.clientHeight + 1) {
-      description.style.fontSize = --size + 'px';
+  const dimensions = new WeakMap();
+  const pending = new Set();
+  const sizes = new WeakMap();
+  function measure() {
+    // Read every card first, then write styles; no write/read loop per pixel.
+    const measurements = [...pending].filter(el => el.isConnected).map(el => ({ el, overflow: el.scrollHeight > el.clientHeight + 1, size: sizes.get(el) ?? 17 }));
+    pending.clear();
+    for (const { el, overflow, size } of measurements) {
+      if (overflow && size > 14) {
+        sizes.set(el, size - 1);
+        el.style.fontSize = (size - 1) + 'px';
+        pending.add(el);
+      } else el.tabIndex = overflow ? 0 : -1;
     }
-    description.tabIndex = description.scrollHeight > description.clientHeight + 1 ? 0 : -1;
+    projectFitFrame = pending.size ? requestAnimationFrame(measure) : undefined;
   }
-
-  descriptions.forEach(fit);
+  function schedule(description) {
+    if (!description.isConnected) return;
+    description.style.fontSize = '17px';
+    sizes.set(description, 17);
+    pending.add(description);
+    if (!projectFitFrame) projectFitFrame = requestAnimationFrame(measure);
+  }
+  descriptions.forEach(schedule);
   if ('ResizeObserver' in window) {
-    projectCardObserver = new ResizeObserver(entries => entries.forEach(entry => fit(entry.target)));
+    projectCardObserver = new ResizeObserver(entries => {
+      for (const { target, contentRect } of entries) {
+        const previous = dimensions.get(target);
+        dimensions.set(target, [contentRect.width, contentRect.height]);
+        if (!previous || Math.abs(previous[0] - contentRect.width) > .5 || Math.abs(previous[1] - contentRect.height) > .5) schedule(target);
+      }
+    });
     descriptions.forEach(description => projectCardObserver.observe(description));
   }
 }
 
-async function renderAtPosition(state, behavior = 'instant') {
+let shineObserver;
+function setupButtonShine() {
+  shineObserver?.disconnect();
+  const buttons = document.querySelectorAll('.button-shine');
+  const visible = new Set();
+  const update = () => buttons.forEach(button => button.classList.toggle('is-shine-visible', !document.hidden && visible.has(button)));
+  document.onvisibilitychange = update;
+  if (!('IntersectionObserver' in window)) {
+    buttons.forEach(button => visible.add(button));
+    update();
+    return;
+  }
+  shineObserver = new IntersectionObserver(entries => {
+    entries.forEach(({ target, isIntersecting }) => isIntersecting ? visible.add(target) : visible.delete(target));
+    update();
+  });
+  buttons.forEach(button => shineObserver.observe(button));
+}
+
+async function renderAtPosition(state, behavior = 'instant', { initial = false } = {}) {
   const rendered = render();
   const version = renderVersion;
   await rendered;
   if (version !== renderVersion) return;
+  // A prerendered page is already visible: do not reset an early user scroll.
+  if (initial && !state?.damviScroll && !location.hash) return;
+  if (state?.damviScroll || location.hash) {
+    await document.fonts.ready;
+    if (version !== renderVersion) return;
+  }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) behavior = 'instant';
   if (state?.damviScroll) {
     const { x, y } = state.damviScroll;
     window.scrollTo({ left: x, top: y, behavior: 'instant' });
   } else if (location.hash) {
     document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior });
   } else {
-    window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
+    window.scrollTo({ left: 0, top: 0, behavior });
   }
 }
 
@@ -520,10 +569,10 @@ document.addEventListener('click', event => {
   if (link.href !== location.href) {
     history.pushState({ damviReturn: !samePage || history.state?.damviReturn === true }, '', link.href);
   }
-  renderAtPosition(null, samePage ? 'auto' : 'instant');
+  renderAtPosition(null, samePage ? 'smooth' : 'instant');
 });
 window.addEventListener('popstate', event => renderAtPosition(event.state));
 if (!document.querySelector('#page-content')) document.querySelector('#app').innerHTML = withBasePath(`${siteNav()}<main id="page-content"></main>`);
 setupNav();
-if (renderedPath) { setupForm(); setupProcess(); setupProjectCards(); }
-renderAtPosition(history.state);
+if (renderedPath) { setupForm(); setupProcess(); setupProjectCards(); setupButtonShine(); }
+renderAtPosition(history.state, 'instant', { initial: true });
