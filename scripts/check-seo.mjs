@@ -22,7 +22,7 @@ for (const path of model.routes) {
   assert.ok(schema['@graph'].some(n=>n['@type']==='WebSite'));
   if (model.services.some(s=>path === '/services/'+s.slug)) {
     assert.ok(schema['@graph'].some(n=>n['@type']==='Service'),path+': missing Service');
-    assert.equal((html.match(/<details class="service-faq-item">/g)||[]).length,3,path+': missing visible FAQ');
+    assert.equal((html.match(/<details class="service-faq-item">/g)||[]).length,4,path+': missing visible FAQ');
     assert.ok(html.includes('class="related-services"'),path+': missing related links');
   }
   const seo = getPageSeo(path,model.services,model.goals);

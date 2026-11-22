@@ -57,7 +57,7 @@ export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIG
   let title, description, canonicalPath = path, noindex = !indexable;
   if (path === '/') {
     title = 'DAMVI — агентство цифровых решений для бизнеса';
-    description = 'DAMVI — цифровое агентство для бизнеса: разработка сайтов и приложений, внедрение ИИ, автоматизация, чат-боты, SEO и GEO-продвижение. Работаем удалённо по России.';
+    description = 'DAMVI — цифровое агентство для бизнеса из Перми: сайты, приложения, ИИ, автоматизация, чат-боты, SEO и GEO-продвижение. Работаем удалённо по всей России.';
   } else if (service) {
     title = `${serviceTitles[service.slug] || service.title} — DAMVI`;
     const summary = serviceDescriptions[service.slug] || service.subtitle.split(/(?<=[.!?])\s/)[0];

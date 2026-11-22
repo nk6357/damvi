@@ -138,7 +138,7 @@ def main():
     with ZipFile(archive,'w',ZIP_DEFLATED) as z:
         for p in sorted(OUT.glob('*')):
             if p.is_file(): z.write(p,'keywords-1000/'+p.name)
-        for name in ['План-SEO-DAMVI.txt','wordstat-commercial.csv','wordstat-seeds.csv','pages.csv','Работа-с-расширенной-семантикой.txt','keyword-coverage-17000.csv','keyword-coverage-summary.csv','Проверка-размещения-ключей.txt']:
+        for name in ['План-SEO-DAMVI.txt','wordstat-commercial.csv','wordstat-seeds.csv','pages.csv','Работа-с-расширенной-семантикой.txt','keyword-coverage-17000.csv','keyword-coverage-summary.csv','Проверка-размещения-ключей.txt','agency-spelling-variants.csv','audience-problem-queries.csv','regional-service-queries.csv','Региональное-SEO-и-запросы-ЦА.txt']:
             p=SEO/name
             if p.exists():z.write(p,p.name)
     print(f'{len(TOPICS)} services × 1000 = {len(all_rows)} rows; {len(verified)} measured rows; {len(overlaps)} exact cross-page overlaps. Archive: {archive}')

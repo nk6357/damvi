@@ -1,5 +1,5 @@
 import { getPageSeo, applyPageSeo } from './seo.js';
-import { serviceSearchContent, relatedServiceSlugs, serviceSearchLabels } from './service-search-content.js';
+import { serviceSearchContent, relatedServiceSlugs, serviceSearchLabels, serviceProblemAnswers } from './service-search-content.js';
 
 const config = {
   contacts: { email: '', telegram: { label: '@nk6357', url: 'https://t.me/nk6357' }, phone: '' },
@@ -191,8 +191,8 @@ function renderServiceSection(section) {
 }
 
 function renderServiceSearchContent(service) {
-  const answers = serviceSearchContent[service.slug] || [];
-  const pricing = ['Как определяются стоимость и сроки?', `Для услуги на сайте указано: ${service.price}. Пометка «от» означает минимальный бюджет входа. Итоговый объём, цену, сроки и дополнительные расходы согласуем по вашей задаче до начала работ. Работаем удалённо по России.`];
+  const answers = [...(serviceSearchContent[service.slug] || []), ...(serviceProblemAnswers[service.slug] ? [serviceProblemAnswers[service.slug]] : [])];
+  const pricing = ['Как определяются стоимость и сроки?', `Для услуги на сайте указано: ${service.price}. Пометка «от» означает минимальный бюджет входа. Итоговый объём, цену, сроки и дополнительные расходы согласуем по вашей задаче до начала работ. Работаем удалённо из Перми по всей России.`];
   const faq = [...answers, pricing].map(([question, answer]) => `<details class="service-faq-item"><summary>${escape(question)}</summary><p>${escape(answer)}</p></details>`).join('');
   const related = (relatedServiceSlugs[service.slug] || []).map(slug => `<a href="/services/${escape(slug)}">${escape(serviceSearchLabels[slug])}</a>`).join('');
   return `<section class="service-search-content" aria-labelledby="service-questions"><h2 id="service-questions">Вопросы перед началом работы</h2>${faq}${related ? `<nav class="related-services" aria-label="Связанные услуги"><h3>Смежные решения</h3>${related}</nav>` : ''}</section>`;
@@ -256,11 +256,24 @@ function agencyOverview() {
     <details class="service-faq-item"><summary>Digital-агентство для бизнеса — какие задачи решает DAMVI?</summary><p>Как агентство digital-решений для бизнеса, мы начинаем с конкретной задачи: привлечение клиентов, сокращение ручной работы или запуск цифрового продукта. Под неё выбираем разработку, автоматизацию, SEO, GEO или сочетание подходящих инструментов.</p></details>
     <details class="service-faq-item"><summary>Агентство полного цикла для бизнеса — что входит в работу?</summary><p>Для согласованного цифрового продукта можем пройти путь от разбора задачи и проектирования до реализации и поддержки. Полный цикл относится к оговорённому проекту: реклама, брендинг и другие работы не подразумеваются автоматически. Состав результата, этапы и ответственность фиксируются до начала работ.</p></details>
     <details class="service-faq-item"><summary>Агентство услуг для бизнеса — это про любые услуги?</summary><p>Нет. DAMVI — агентство цифровых решений для бизнеса: работаем с сайтами, приложениями, данными, автоматизацией и поисковым присутствием. Конкретные возможности, условия и стоимость указаны на страницах наших услуг.</p></details>
+    <details class="service-faq-item"><summary>Правильно «агентство» или «агенство»?</summary><p>Правильное написание — «агентство». Если вы искали «цифровое агенство» или «агенство цифровых услуг», речь может идти о тех же задачах разработки, автоматизации и поискового продвижения. Описания решений DAMVI доступны в разделе наших услуг.</p></details>
+  </section>`;
+}
+
+function agencyGeography() {
+  const cities = ['Пермь','Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань','Красноярск','Нижний Новгород','Челябинск','Уфа','Самара','Ростов-на-Дону','Омск','Краснодар','Воронеж','Волгоград'];
+  return `<section class="service-search-content agency-geography" aria-labelledby="agency-geography-title">
+    <h2 id="agency-geography-title">Пермское цифровое агентство — работаем по всей России</h2>
+    <p>DAMVI — цифровое агентство из Перми. Помогаем бизнесу с разработкой сайтов и приложений, ИИ, автоматизацией, SEO и GEO. Для работы над проектом не обязательно находиться в одном городе: задачу, материалы, этапы и результат согласуем дистанционно.</p>
+    <h3>Города, с бизнесом которых готовы работать удалённо</h3>
+    <ul class="agency-cities">${cities.map(city => `<li>${escape(city)}</li>`).join('')}</ul>
+    <p>Работаем и с другими городами России. Список показывает географию удалённого обслуживания, а не наличие местных офисов или уже выполненных проектов.</p>
+    <details class="service-faq-item"><summary>Можно ли заказать разработку сайта или автоматизацию бизнеса из другого города?</summary><p>Да. Опишите задачу и удобный способ связи. Согласуем объём работ, порядок передачи материалов и доступов, этапы, сроки и формат обратной связи. Для проекта из любого города действуют согласованные условия договора.</p></details>
   </section>`;
 }
 
 function home() {
-  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${agencyOverview()}${footer()}`;
+  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${agencyOverview()}${agencyGeography()}${footer()}`;
 }
 
 function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ', backHref, headingClass = '') {
