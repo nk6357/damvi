@@ -58,6 +58,7 @@ export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIG
   if (path === '/') {
     title = 'DAMVI — агентство цифровых решений для бизнеса';
     description = 'DAMVI — цифровое агентство для бизнеса из Перми: сайты, приложения, ИИ, автоматизация, чат-боты, SEO и GEO-продвижение. Работаем удалённо по всей России.';
+    description += ' Агентство цифровых услуг и digital-решений: полный цикл работы над согласованным цифровым продуктом — от разбора задачи и проектирования до реализации и поддержки.';
   } else if (service) {
     title = `${serviceTitles[service.slug] || service.title} — DAMVI`;
     const summary = serviceDescriptions[service.slug] || service.subtitle.split(/(?<=[.!?])\s/)[0];
@@ -86,6 +87,12 @@ export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIG
   const graph = [{ '@type': 'WebSite', '@id': origin + '/#website', url: origin + '/', name: 'DAMVI', alternateName: 'Дамви', inLanguage: 'ru-RU' }];
   const page = { '@type': goal || path === '/services/other' || path === '/projects' ? 'CollectionPage' : 'WebPage', '@id': canonical + '#page', url: canonical, name: title, description, inLanguage: 'ru-RU', isPartOf: { '@id': origin + '/#website' } };
   graph.push(page);
+  if (path === '/') {
+    // Summarize the agency and process already represented by the homepage.
+    // Do not recreate deleted FAQ or city lists as hidden structured content.
+    graph[0].description = description;
+    page.about = { '@type': 'Brand', name: 'DAMVI', description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' };
+  }
   if (service) {
     const entity = { '@type': 'Service', '@id': canonical + '#service', name: service.title, serviceType: service.name, description: service.subtitle, url: canonical, areaServed: { '@type': 'Country', name: 'Россия' }, brand: { '@type': 'Brand', name: 'DAMVI' } };
     graph.push(entity);
