@@ -269,7 +269,7 @@ function projectsPage() { return `${innerHeader('Наши работы', '', '/#
 function legalPage(doc) {
   const paragraphs = doc.text.split(/\n/).filter(Boolean).slice(1).map(line => {
     const tag = /^\d+\.\s/.test(line) ? 'h2' : 'p';
-    return `<${tag}>${escape(line).replaceAll('info@damvi.ru', '<a href="mailto:info@damvi.ru">info@damvi.ru</a>')}</${tag}>`;
+    return `<${tag}>${escape(line).replaceAll('office@damvi.ru', '<a href="mailto:office@damvi.ru">office@damvi.ru</a>')}</${tag}>`;
   }).join('');
   return `${innerHeader(doc.title, 'ДОКУМЕНТ', '/#contact-form')}<article class="legal-document">${paragraphs}<nav aria-label="Правовые документы"><a href="/privacy">Политика обработки данных</a><a href="/consent">Согласие на обработку данных</a><a href="/legal">Информация об исполнителе</a></nav></article>${footer()}`;
 }

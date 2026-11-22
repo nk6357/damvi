@@ -2290,13 +2290,13 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 11619,
-          "renderedBodyHash": "30cc83958c22db57444a1b623a02dd9e9d4ea481d6e0c3cd240de998f0bc877f"
+          "contentTextLength": 11627,
+          "renderedBodyHash": "d46082ba6ad9043a0c3682be646a79dd23ebc1ab5cc865b8c71e46d319d070d2"
         },
         "/consent": {
           "expectedStatus": 200,
           "title": "Согласие на обработку персональных данных — DAMVI",
-          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
           "h1": [
             "Согласие на обработку персональных данных"
           ],
@@ -2304,7 +2304,7 @@
           "robots": "noindex, follow",
           "openGraph": {
             "title": "Согласие на обработку персональных данных — DAMVI",
-            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
             "url": "https://damvi.ru/consent",
             "site_name": "DAMVI",
             "type": "website",
@@ -2326,7 +2326,7 @@
                 "@id": "https://damvi.ru/consent#page",
                 "url": "https://damvi.ru/consent",
                 "name": "Согласие на обработку персональных данных — DAMVI",
-                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
                 "inLanguage": "ru-RU",
                 "isPartOf": {
                   "@id": "https://damvi.ru/#website"
@@ -2371,8 +2371,8 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 4490,
-          "renderedBodyHash": "32c57960ac6105426a2eefb1df208f70dfec39dd454c4c69b827ff0e5352915c"
+          "contentTextLength": 4498,
+          "renderedBodyHash": "5c62066b0d93f608868cb4c5af3d011d6c30f404931b9cf90e8c6b883c550073"
         },
         "/legal": {
           "expectedStatus": 200,
@@ -2452,8 +2452,8 @@
             "/legal"
           ],
           "inSitemap": true,
-          "contentTextLength": 4571,
-          "renderedBodyHash": "ec136a88bc4c3d03850290c6387b671621537c8010c28279bccac0941bcde060"
+          "contentTextLength": 4575,
+          "renderedBodyHash": "91a41949a1f63d2a33a0833552920fbc45aa8243b9bd0f26f93ee618078ee010"
         },
         "/404": {
           "expectedStatus": 404,
@@ -4784,13 +4784,13 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 11619,
-          "renderedBodyHash": "30cc83958c22db57444a1b623a02dd9e9d4ea481d6e0c3cd240de998f0bc877f"
+          "contentTextLength": 11627,
+          "renderedBodyHash": "d46082ba6ad9043a0c3682be646a79dd23ebc1ab5cc865b8c71e46d319d070d2"
         },
         "/consent": {
           "expectedStatus": 200,
           "title": "Согласие на обработку персональных данных — DAMVI",
-          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
           "h1": [
             "Согласие на обработку персональных данных"
           ],
@@ -4798,7 +4798,7 @@
           "robots": "noindex, follow",
           "openGraph": {
             "title": "Согласие на обработку персональных данных — DAMVI",
-            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
             "url": "https://damvi.ru/consent",
             "site_name": "DAMVI",
             "type": "website",
@@ -4820,7 +4820,7 @@
                 "@id": "https://damvi.ru/consent#page",
                 "url": "https://damvi.ru/consent",
                 "name": "Согласие на обработку персональных данных — DAMVI",
-                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
                 "inLanguage": "ru-RU",
                 "isPartOf": {
                   "@id": "https://damvi.ru/#website"
@@ -4865,8 +4865,8 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 4490,
-          "renderedBodyHash": "32c57960ac6105426a2eefb1df208f70dfec39dd454c4c69b827ff0e5352915c"
+          "contentTextLength": 4498,
+          "renderedBodyHash": "5c62066b0d93f608868cb4c5af3d011d6c30f404931b9cf90e8c6b883c550073"
         },
         "/legal": {
           "expectedStatus": 200,
@@ -4946,8 +4946,8 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 4571,
-          "renderedBodyHash": "ec136a88bc4c3d03850290c6387b671621537c8010c28279bccac0941bcde060"
+          "contentTextLength": 4575,
+          "renderedBodyHash": "91a41949a1f63d2a33a0833552920fbc45aa8243b9bd0f26f93ee618078ee010"
         },
         "/404": {
           "expectedStatus": 404,
@@ -7278,13 +7278,13 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 11619,
-          "renderedBodyHash": "f06b980ff5473605e5dd6d0490f81a433598fec362ff9deff73b8ca1bd016e17"
+          "contentTextLength": 11627,
+          "renderedBodyHash": "8cf680dc77cd84fe84497bc78fc47a9e111990ba00e89b5ed88b0f17e89623a3"
         },
         "/consent": {
           "expectedStatus": 200,
           "title": "Согласие на обработку персональных данных — DAMVI",
-          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+          "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
           "h1": [
             "Согласие на обработку персональных данных"
           ],
@@ -7292,7 +7292,7 @@
           "robots": "noindex, follow",
           "openGraph": {
             "title": "Согласие на обработку персональных данных — DAMVI",
-            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+            "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
             "url": "https://damvi.ru/consent",
             "site_name": "DAMVI",
             "type": "website",
@@ -7314,7 +7314,7 @@
                 "@id": "https://damvi.ru/consent#page",
                 "url": "https://damvi.ru/consent",
                 "name": "Согласие на обработку персональных данных — DAMVI",
-                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу info@damvi.ru.",
+                "description": "Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.",
                 "inLanguage": "ru-RU",
                 "isPartOf": {
                   "@id": "https://damvi.ru/#website"
@@ -7359,8 +7359,8 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 4490,
-          "renderedBodyHash": "01477b8ffc7672211c808aee037697ead158d4e0d2ed2a3410b3bff652df7b27"
+          "contentTextLength": 4498,
+          "renderedBodyHash": "295def594775b9b0412099d4ac65083058dfc460fbbf0c38c18bb13a1f761b29"
         },
         "/legal": {
           "expectedStatus": 200,
@@ -7440,8 +7440,8 @@
             "/legal"
           ],
           "inSitemap": false,
-          "contentTextLength": 4571,
-          "renderedBodyHash": "897a24aad7e8c4d2dde8a8db5a01096060b34bd549cb9aa0196332628fab5189"
+          "contentTextLength": 4575,
+          "renderedBodyHash": "e53141cc1938f31a36e80fd1b523fa6b48ef4f40b3200bd392ee6d688094f14b"
         },
         "/404": {
           "expectedStatus": 404,
@@ -7515,20 +7515,20 @@
       "sha256": "014f20b3de66f11d522bff560d73a662fe921aabcb31b56425b16b34e4bee4fe"
     },
     "public/app.js": {
-      "bytes": 47517,
-      "sha256": "87484d00d0498dff87543602c763c4b41df7efadaf83ff29566660dcd1615a7c"
+      "bytes": 47523,
+      "sha256": "c8a7a2458bd2123c49177c87c7dc72a78ff8a2d0298e17d23b37d93d99687fa1"
     },
     "public/seo.js": {
-      "bytes": 13896,
-      "sha256": "202525fd11db0fab166bd3cb1e0b1660b9bc66f6dcfbcebd687761b003866a24"
+      "bytes": 14145,
+      "sha256": "69a0069bf8a3f1edd96df677895c51021b7e7f4d5012d7e0d306afb18fc1edb2"
     },
     "public/service-search-content.js": {
       "bytes": 30564,
       "sha256": "a6c4c597459ed9faadc345b347c39ca3e5c922e063f0ea1cb05313fb0e52caca"
     },
     "public/legal-documents.js": {
-      "bytes": 36863,
-      "sha256": "94d5953f0ee0141109e613657d9a7e52b8be1cfef5c8e14691e308e128ceb2e1"
+      "bytes": 36883,
+      "sha256": "74b6c75d7d55afb8f42996f3d108804f740c2254393285927551b4ac25a7a01f"
     },
     "public/other-services.js": {
       "bytes": 32219,
