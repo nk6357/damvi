@@ -31,6 +31,7 @@ $problem = $trim($data['problem'] ?? '');
 $contact = $trim($data['contact'] ?? '');
 $phone = $trim($data['phone'] ?? '');
 $errors = [];
+if (($data['consent'] ?? null) !== true) $errors['consent'] = 'Подтвердите согласие на обработку персональных данных.';
 if ($problem === '') $errors['problem'] = 'Опишите задачу.';
 elseif (mb_strlen($problem, 'UTF-8') > 2500) $errors['problem'] = 'Сократите описание до 2500 символов.';
 $email = "/^[\\w!#\$%&'*+\\/=?^{}|~-]+(?:\\.[\\w!#\$%&'*+\\/=?^{}|~-]+)*@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z]{2,63}$/iD";
@@ -66,6 +67,9 @@ flock($stateFile, LOCK_UN); fclose($stateFile);
 // Plain text only: never interpret visitor content as HTML, commands or URLs to fetch.
 $text = "Новая заявка DAMVI\n\nПроблема:\n".$problem."\n\nTelegram / email: ".$contact;
 if ($phone !== '') $text .= "\nТелефон: ".$phone;
+$text .= "\n\nСогласие на обработку данных: подтверждено отдельным флажком."
+    ."\nВерсия текста согласия: 2026-11-23.2-preview"
+    ."\nВремя получения: ".gmdate('Y-m-d\\TH:i:s\\Z');
 $curl = curl_init('https://api.telegram.org/bot'.$token.'/sendMessage');
 curl_setopt_array($curl, [CURLOPT_POST=>true, CURLOPT_POSTFIELDS=>json_encode(['chat_id'=>$chat,'text'=>$text,'link_preview_options'=>['is_disabled'=>true]], JSON_UNESCAPED_UNICODE), CURLOPT_HTTPHEADER=>['Content-Type: application/json'], CURLOPT_RETURNTRANSFER=>true, CURLOPT_CONNECTTIMEOUT=>5, CURLOPT_TIMEOUT=>15, CURLOPT_FOLLOWLOCATION=>false, CURLOPT_PROTOCOLS=>CURLPROTO_HTTPS, CURLOPT_SSL_VERIFYPEER=>true, CURLOPT_SSL_VERIFYHOST=>2]);
 $response = curl_exec($curl);

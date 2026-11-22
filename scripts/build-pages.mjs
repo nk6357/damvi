@@ -25,11 +25,11 @@ const serviceSlugs = [
   'other'
 ];
 const goalSlugs = [...app.matchAll(/^  '([\w-]+)': \{$/gm)].map(match => match[1]);
-const routes = ['', 'projects', 'privacy', ...serviceSlugs.map(slug => 'services/' + slug),
+const routes = ['', 'projects', 'privacy', 'consent', 'legal', ...serviceSlugs.map(slug => 'services/' + slug),
   ...goalSlugs.map(slug => 'goals/' + slug)];
 
 await Promise.all([
-  ...['app.js', 'other-services.js', 'styles.css', 'assets', 'robots.txt']
+  ...['app.js', 'other-services.js', 'legal-documents.js', 'styles.css', 'assets', 'robots.txt']
     .map(file => cp(join('public', file), join(output, file), { recursive: true })),
   writeFile(join(output, '.nojekyll'), ''),
   writeFile(join(output, '404.html'), html),

@@ -31,6 +31,8 @@ async function sendMail(payload) {
     `Telegram / email: ${payload.contact}`
   ];
   if (payload.phone) text.push(`Телефон: ${payload.phone}`);
+  text.push('', 'Согласие на обработку данных: подтверждено отдельным флажком.',
+    'Версия текста согласия: 2026-11-23.2-preview', `Время получения: ${new Date().toISOString()}`);
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -54,6 +56,7 @@ async function handleContact(req, res) {
   const contact = typeof body.contact === 'string' ? body.contact.trim() : '';
   const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
   const errors = {};
+  if (body.consent !== true) errors.consent = 'Подтвердите согласие на обработку персональных данных.';
   if (!problem) errors.problem = 'Опишите задачу.';
   else if ([...problem].length > 2500) errors.problem = 'Сократите описание до 2500 символов.';
   if (!contact) errors.contact = 'Укажите, куда вам ответить.';

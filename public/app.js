@@ -144,7 +144,7 @@ function footer() {
     config.contacts.telegram && `<a href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">Telegram</a>`,
     config.contacts.phone && `<a href="tel:${escape(config.contacts.phone.replace(/\s/g, ''))}">${escape(config.contacts.phone)}</a>`
   ].filter(Boolean).join('');
-  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div>${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}</div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
+  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div><div class="footer-contact">${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}<nav class="footer-legal" aria-label="Правовые документы"><a href="/privacy">Политика обработки данных</a><a href="/consent">Согласие на обработку данных</a><a href="/legal">Информация об исполнителе</a></nav></div></div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
 }
 
 function form() {
@@ -164,10 +164,14 @@ function form() {
       <input id="phone" name="phone" type="tel" autocomplete="tel" value="+7" aria-describedby="phone-error" required />
       <p class="field-error" id="phone-error" aria-live="polite"></p>
     </div>
+    <div class="form-consent">
+      <label class="consent-checkbox" for="consent"><input id="consent" name="consent" type="checkbox" aria-describedby="consent-error" required /><span>Я согласен на <a href="/consent" target="_blank" rel="noopener">обработку персональных данных</a></span></label>
+      <p class="field-error" id="consent-error" aria-live="polite"></p>
+    </div>
     <button class="button button-red button-shine" type="submit"><span class="form-submit-label">Обсудить задачу</span></button>
     <p class="form-status" id="form-status" role="status"></p>
     <div class="form-notes">
-      <p class="consent-note">Нажимая кнопку «Обсудить задачу», вы соглашаетесь с <a href="/privacy">политикой конфиденциальности</a>.</p>
+      <p class="consent-note"><a href="/privacy">Политика конфиденциальности</a></p>
     </div>
   </form>`;
 }
@@ -250,7 +254,13 @@ function servicePage(slug) {
 }
 function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services', 'direction-title')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2 class="direction-title">Другие направления</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
 function projectsPage() { return `${innerHeader('Наши работы', '', '/#works')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
-function privacyPage() { return `${innerHeader('Политика конфиденциальности', 'ДОКУМЕНТ', '/#discuss')}<section class="content-placeholder"><p>Текст политики будет добавлен владельцем сайта.</p></section>${footer()}`; }
+function legalPage(doc) {
+  const paragraphs = doc.text.split(/\n/).filter(Boolean).slice(1).map(line => {
+    const tag = /^\d+\.\s/.test(line) ? 'h2' : 'p';
+    return `<${tag}>${escape(line).replaceAll('info@damvi.ru', '<a href="mailto:info@damvi.ru">info@damvi.ru</a>')}</${tag}>`;
+  }).join('');
+  return `${innerHeader(doc.title, 'ДОКУМЕНТ', '/#contact-form')}<article class="legal-document">${paragraphs}<nav aria-label="Правовые документы"><a href="/privacy">Политика обработки данных</a><a href="/consent">Согласие на обработку данных</a><a href="/legal">Информация об исполнителе</a></nav></article>${footer()}`;
+}
 function notFound() { return `${innerHeader('Страница не найдена', '404', '/')}<section class="empty-state"><a class="button button-red" href="/">На главную</a></section>${footer()}`; }
 
 let renderVersion = 0;
@@ -280,7 +290,13 @@ async function render() {
     }
     if (version !== renderVersion) return;
   }
-  let content = path === '/' ? home() : path === '/projects' ? projectsPage() : path === '/privacy' ? privacyPage() : isGoal ? goalPage(slug) : isService ? servicePage(slug) : notFound();
+  let legalDoc;
+  if (['/privacy', '/consent', '/legal'].includes(path)) {
+    const { legalDocuments } = await import('./legal-documents.js');
+    if (version !== renderVersion) return;
+    legalDoc = legalDocuments[path.slice(1)];
+  }
+  let content = path === '/' ? home() : path === '/projects' ? projectsPage() : legalDoc ? legalPage(legalDoc) : isGoal ? goalPage(slug) : isService ? servicePage(slug) : notFound();
   main.innerHTML = withBasePath(content);
   renderedPath = path;
   setupForm();
@@ -368,6 +384,7 @@ function validateClient(data) {
   else if (data.contact.length > 254 || !(email.test(data.contact) || telegram.test(data.contact))) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
   if (!data.phone || data.phone === '+7') errors.phone = 'Укажите номер для связи.';
   else if (!/^\+7[0-9 ().-]{10,30}$/.test(data.phone) || !/^7\d{10}$/.test(data.phone.replace(/\D/g, ''))) errors.phone = 'Введите 10 цифр после +7.';
+  if (data.consent !== true) errors.consent = 'Подтвердите согласие на обработку персональных данных.';
   return errors;
 }
 function setupForm() {
@@ -408,7 +425,7 @@ function setupForm() {
 
   function showErrors(errors) {
     let firstInvalid;
-    for (const key of ['problem', 'contact', 'phone']) {
+    for (const key of ['problem', 'contact', 'phone', 'consent']) {
       const message = errors[key] || '';
       const field = formEl.elements[key];
       formEl.querySelector('#' + key + '-error').textContent = message;
@@ -426,6 +443,7 @@ function setupForm() {
       problem: formEl.elements.problem.value.trim(),
       contact: formEl.elements.contact.value.trim(),
       phone: formEl.elements.phone.value.trim(),
+      consent: formEl.elements.consent.checked,
       website: trap.value
     };
     status.textContent = '';
