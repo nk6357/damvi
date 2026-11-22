@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "check:search": "node scripts/check-search-readiness.mjs",
     "build": "node scripts/build-seo.mjs",
     "build:local": "node scripts/build-seo.mjs --local",
     "package:beget": "node scripts/package-beget.mjs",

@@ -91,15 +91,19 @@ export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIG
     // Summarize the agency and process already represented by the homepage.
     // Do not recreate deleted FAQ or city lists as hidden structured content.
     graph[0].description = description;
-    page.about = { '@type': 'Brand', name: 'DAMVI', description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' };
+    page.about = { '@type': 'Brand', '@id': origin + '/#brand', name: 'DAMVI', description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' };
   }
   if (service) {
     const entity = { '@type': 'Service', '@id': canonical + '#service', name: service.title, serviceType: service.name, description: service.subtitle, url: canonical, areaServed: { '@type': 'Country', name: 'Россия' }, brand: { '@type': 'Brand', name: 'DAMVI' } };
     graph.push(entity);
+    entity.brand['@id'] = origin + '/#brand';
+    entity.mainEntityOfPage = { '@id': page['@id'] };
     page.mainEntity = { '@id': entity['@id'] };
   }
   if (path !== '/' && title !== 'Страница не найдена — DAMVI') {
-    graph.push({ '@type': 'BreadcrumbList', itemListElement: [{ '@type': 'ListItem', position: 1, name: 'DAMVI', item: origin + '/' }, { '@type': 'ListItem', position: 2, name: service?.name || goal?.title || title.replace(' — DAMVI', ''), item: canonical }] });
+    const breadcrumbId = canonical + '#breadcrumb';
+    graph.push({ '@type': 'BreadcrumbList', '@id': breadcrumbId, itemListElement: [{ '@type': 'ListItem', position: 1, name: 'DAMVI', item: origin + '/' }, { '@type': 'ListItem', position: 2, name: service?.name || goal?.title || title.replace(' — DAMVI', ''), item: canonical }] });
+    page.breadcrumb = { '@id': breadcrumbId };
   }
   return { title, description, canonical, noindex, jsonLd: { '@context': 'https://schema.org', '@graph': graph } };
 }
