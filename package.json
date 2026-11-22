@@ -4,6 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "node scripts/build-seo.mjs",
+    "build:local": "node scripts/build-seo.mjs --local",
     "package:beget": "node scripts/package-beget.mjs",
     "dev:beget": "php -S 127.0.0.1:4174 -t public beget-router.php",
     "dev": "php -S 127.0.0.1:4174 -t public beget-router.php",

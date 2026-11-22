@@ -1,3 +1,6 @@
+import { getPageSeo, applyPageSeo } from './seo.js';
+import { serviceSearchContent, relatedServiceSlugs, serviceSearchLabels } from './service-search-content.js';
+
 const config = {
   contacts: { email: '', telegram: { label: '@nk6357', url: 'https://t.me/nk6357' }, phone: '' },
   services: [
@@ -114,8 +117,8 @@ const config = {
   projects: [
     {
       name: 'Сайт для B2B-компании Insol',
-      type: 'Платформа верификации',
-      description: 'Сайт сервиса INSOL AI Passport для верификации разработчиков и представления компетенций корпоративным клиентам.',
+      type: 'Сайт платформы',
+      description: 'Сайт платформы оценки и подбора проверенных AI-разработчиков/интеграторов для бизнеса.',
       url: 'https://insol-dvlp.ru'
     },
     {
@@ -168,7 +171,8 @@ function form() {
       <label class="consent-checkbox" for="consent"><input id="consent" name="consent" type="checkbox" aria-describedby="consent-error" required /><span>Я согласен на <a href="/consent" target="_blank" rel="noopener">обработку персональных данных</a></span></label>
       <p class="field-error" id="consent-error" aria-live="polite"></p>
     </div>
-    <button class="button button-red button-shine" type="submit"><span class="form-submit-label">Обсудить задачу</span></button>
+    <button class="button button-red button-shine" type="submit" disabled><span class="form-submit-label">Обсудить задачу</span></button>
+    <noscript><p>Для отправки заявки включите JavaScript в браузере.</p></noscript>
     <p class="form-status" id="form-status" role="status"></p>
     <div class="form-notes">
       <p class="consent-note"><a href="/privacy">Политика конфиденциальности</a></p>
@@ -186,10 +190,18 @@ function renderServiceSection(section) {
   return `<article class="service-detail-section"><div><h3>${escape(section.title)}</h3>${paragraphs}${items}</div></article>`;
 }
 
+function renderServiceSearchContent(service) {
+  const answers = serviceSearchContent[service.slug] || [];
+  const pricing = ['Как определяются стоимость и сроки?', `Для услуги на сайте указано: ${service.price}. Пометка «от» означает минимальный бюджет входа. Итоговый объём, цену, сроки и дополнительные расходы согласуем по вашей задаче до начала работ. Работаем удалённо по России.`];
+  const faq = [...answers, pricing].map(([question, answer]) => `<details class="service-faq-item"><summary>${escape(question)}</summary><p>${escape(answer)}</p></details>`).join('');
+  const related = (relatedServiceSlugs[service.slug] || []).map(slug => `<a href="/services/${escape(slug)}">${escape(serviceSearchLabels[slug])}</a>`).join('');
+  return `<section class="service-search-content" aria-labelledby="service-questions"><h2 id="service-questions">Вопросы перед началом работы</h2>${faq}${related ? `<nav class="related-services" aria-label="Связанные услуги"><h3>Смежные решения</h3>${related}</nav>` : ''}</section>`;
+}
+
 function serviceDetails(service) {
   const telegram = telegramDraft(`Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
-  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}${renderServiceSearchContent(service)}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
 }
 
 function telegramDraft(message) {
@@ -264,7 +276,7 @@ function legalPage(doc) {
 function notFound() { return `${innerHeader('Страница не найдена', '404', '/')}<section class="empty-state"><a class="button button-red" href="/">На главную</a></section>${footer()}`; }
 
 let renderVersion = 0;
-let renderedPath;
+let renderedPath = document.querySelector('#page-content')?.dataset.renderedPath;
 async function render() {
   const version = ++renderVersion;
   const path = window.location.pathname.slice(basePath.length).replace(/\/$/, '') || '/';
@@ -298,6 +310,7 @@ async function render() {
   }
   let content = path === '/' ? home() : path === '/projects' ? projectsPage() : legalDoc ? legalPage(legalDoc) : isGoal ? goalPage(slug) : isService ? servicePage(slug) : notFound();
   main.innerHTML = withBasePath(content);
+  applyPageSeo(getPageSeo(path, [...config.services, ...(config.otherServices || [])], goals, { indexable: location.hostname === 'damvi.ru' }));
   renderedPath = path;
   setupForm();
   setupProcess();
@@ -402,6 +415,7 @@ function setupForm() {
   const trap = document.createElement('input');
   trap.name = 'website'; trap.tabIndex = -1; trap.autocomplete = 'off'; trap.className = 'sr-only'; trap.setAttribute('aria-hidden', 'true'); formEl.append(trap);
   const button = formEl.querySelector('button[type="submit"]');
+  button.disabled = false;
   const buttonLabel = button.querySelector('.form-submit-label');
   const status = formEl.querySelector('#form-status');
   const phone = formEl.elements.phone;
@@ -495,7 +509,7 @@ function setupForm() {
 history.scrollRestoration = 'manual';
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href^="/"]');
-  if (!link || link.origin !== location.origin || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+  if (!link || link.origin !== location.origin || link.target === '_blank' || link.hasAttribute('download') || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   event.preventDefault();
   history.replaceState({ ...history.state, damviScroll: { x: scrollX, y: scrollY } }, '');
   if (link.matches('.button-back') && history.state?.damviReturn) {
@@ -509,6 +523,7 @@ document.addEventListener('click', event => {
   renderAtPosition(null, samePage ? 'auto' : 'instant');
 });
 window.addEventListener('popstate', event => renderAtPosition(event.state));
-document.querySelector('#app').innerHTML = withBasePath(`${siteNav()}<main id="page-content"></main>`);
+if (!document.querySelector('#page-content')) document.querySelector('#app').innerHTML = withBasePath(`${siteNav()}<main id="page-content"></main>`);
 setupNav();
+if (renderedPath) { setupForm(); setupProcess(); setupProjectCards(); }
 renderAtPosition(history.state);

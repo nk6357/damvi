@@ -11,9 +11,16 @@ AddOutputFilterByType DEFLATE text/html text/css text/javascript application/jav
 </IfModule>
 </IfModule>
 RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.damvi\.ru$ [NC]
+RewriteRule ^ https://damvi.ru%{REQUEST_URI} [R=301,END]
+RewriteRule ^_pages(?:/|$) - [R=404,END]
+RewriteRule ^services/support/?$ /services/seo-blog [R=301,END]
 RewriteRule ^api/contact/?$ api/contact.php [END]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [END]
 RewriteRule ^api/ - [R=404,END]
-RewriteRule ^ index.html [END]
+RewriteCond %{DOCUMENT_ROOT}/_pages/$1.html -f
+RewriteRule ^(.+?)/?$ _pages/$1.html [END]
+ErrorDocument 404 /404.html
+RewriteRule ^ - [R=404,END]
