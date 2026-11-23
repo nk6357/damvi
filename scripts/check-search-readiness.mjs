@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { siteModel } from './site-model.mjs';
 import { getPageSeo, SITE_ORIGIN } from '../public/seo.js';
+import { serviceSearchContent, serviceProblemAnswers } from '../public/service-search-content.js';
 
 // Offline inspection of built HTML, not a claim about live indexing or rankings.
 const model = await siteModel();
@@ -40,7 +41,7 @@ for (const env of environments) {
     const h1 = [...main.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/g)].map(m => sourceText(m[1]));
     const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
     const expected = getPageSeo(route, model.services, model.goals, { indexable: !env.preview });
-    if (env.preview || ['/privacy', '/consent', '/404'].includes(route)) assert.match(meta('robots'), /\bnoindex\b/, env.name + route + ': required noindex lost');
+    if (env.preview || route === '/404') assert.match(meta('robots'), /\bnoindex\b/, env.name + route + ': required noindex lost');
     else assert.ok(!meta('robots').includes('noindex'), env.name + route + ': commercial page accidentally blocked');
     assert.equal(canonical, expected.canonical, env.name + route + ': canonical');
     assert.equal(h1.length, 1, env.name + route + ': H1');
@@ -50,16 +51,29 @@ for (const env of environments) {
     const ids = structured['@graph'].map(n => n['@id']).filter(Boolean);
     assert.equal(new Set(ids).size, ids.length, env.name + route + ': duplicate entity IDs');
     for (const node of structured['@graph']) {
-      assert.ok(!['FAQPage', 'AggregateRating', 'Review'].includes(node['@type']), route + ': unexpected new schema type');
+      assert.ok(!['AggregateRating', 'Review', 'ProfessionalService'].includes(node['@type']), route + ': unsupported review/deprecated schema');
       if (node['@type'] === 'Service') {
         const service = model.services.find(s => canonical.endsWith('/services/' + s.slug));
         assert.ok(service && sourceText(main).includes(service.name), route + ': service not represented in HTML');
-        assert.equal((main.match(/class="service-faq-item"/g) || []).length, 4, route + ': missing HTML answers');
+        const expectedAnswers = serviceSearchContent[service.slug].length + (serviceProblemAnswers[service.slug] ? 1 : 0) + 1;
+        assert.equal((main.match(/class="service-faq-item"/g) || []).length, expectedAnswers, route + ': missing HTML answers');
         assert.equal(node.brand['@id'], SITE_ORIGIN + '/#brand', route + ': inconsistent brand');
         assert.equal(node.mainEntityOfPage['@id'], canonical + '#page', route + ': missing service/page link');
       }
       if (node.breadcrumb) assert.ok(ids.includes(node.breadcrumb['@id']), route + ': unresolved breadcrumb');
-      if (node.mainEntity) assert.ok(ids.includes(node.mainEntity['@id']), route + ': unresolved mainEntity');
+      if (node.mainEntity?.['@id']) assert.ok(ids.includes(node.mainEntity['@id']), route + ': unresolved mainEntity');
+      if (node['@type'] === 'FAQPage') {
+        const visible = sourceText(main).replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+        assert.ok(Array.isArray(node.mainEntity) && node.mainEntity.length >= 4, route + ': insufficient FAQ');
+        const questions = new Set();
+        for (const question of node.mainEntity) {
+          assert.equal(question['@type'], 'Question');
+          assert.equal(question.acceptedAnswer?.['@type'], 'Answer');
+          assert.ok(!questions.has(question.name), route + ': duplicate question');
+          questions.add(question.name);
+          assert.ok(visible.includes(question.name) && visible.includes(question.acceptedAnswer.text), route + ': hidden or inconsistent FAQ');
+        }
+      }
     }
     const base = html.match(/name="damvi-pages-base" content="([^"]*)"/)?.[1] || '';
     const internalLinks = [...html.matchAll(/\bhref="(\/(?!\/)[^"]*)"/g)].map(m => {
@@ -95,7 +109,7 @@ for (const env of environments) {
   if (env.name !== 'pages') assert.deepEqual((await readdir(join(env.root, 'api'))).sort(), ['contact-lib.php', 'contact.php'], env.name + ': unexpected public API files');
   snapshot.environments[env.name] = { robots, sitemapUrls, aliases: model.aliases, routes };
 }
-for (const file of ['public/styles.css', 'public/app.js', 'public/seo.js', 'public/service-search-content.js', 'public/legal-documents.js', 'public/other-services.js']) {
+for (const file of ['public/styles.css', 'public/app.js', 'public/seo.js', 'public/search-content.js', 'public/service-search-content.js', 'public/legal-documents.js', 'public/other-services.js']) {
   snapshot.resources[file] = { bytes: (await stat(file)).size, sha256: hash(await readFile(file)) };
 }
 

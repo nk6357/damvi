@@ -1,5 +1,10 @@
 // Shared by the static build and client navigation. No tracking or external requests.
+import { agencyProfile, homeFaq, goalContent } from './search-content.js';
+import { getServiceFaq } from './service-search-content.js';
 export const SITE_ORIGIN = 'https://damvi.ru';
+export const OG_IMAGE = SITE_ORIGIN + '/assets/og-image.jpg';
+// Preserve the existing expanded agency description while keeping the search snippet concise.
+const agencyDescription = 'Damvi — цифровое агентство для бизнеса из Перми: сайты, приложения, ИИ, автоматизация, чат-боты, SEO и GEO-продвижение. Работаем удалённо по всей России. Агентство цифровых услуг и digital-решений: полный цикл работы над согласованным цифровым продуктом — от разбора задачи и проектирования до реализации и поддержки.';
 const serviceTitles = {
   websites: 'Разработка сайтов под ключ для бизнеса',
   chatbots: 'Разработка чат-ботов для бизнеса: Telegram, VK и MAX',
@@ -39,14 +44,14 @@ const serviceDescriptions = {
   'web-design': 'Веб-дизайн для бизнеса: структура страниц, UX/UI, прототипы и адаптивные интерфейсы сайтов, кабинетов и онлайн-сервисов.'
 };
 const goalMeta = {
-  'more-clients': ['Привлечение клиентов: SEO, GEO и конверсия сайта', 'Помогаем бизнесу получать обращения: базовое SEO, GEO-продвижение, SEO-блог, веб-аналитика, дизайн и оптимизация конверсии. Решения DAMVI.'],
-  'less-manual-work': ['Автоматизация бизнеса и сокращение ручной работы', 'ИИ, чат-боты, собственная CRM, интеграции и обработка данных. Подбираем решение для автоматизации процессов вашей компании. DAMVI.'],
-  'launch-product': ['Разработка цифровых продуктов для бизнеса', 'Разработка сайтов, веб-сервисов, MVP, мобильных и десктопных приложений, чат-ботов и Mini Apps. От идеи до запуска с DAMVI.']
+  'more-clients': ['Привлечение клиентов: SEO, GEO и конверсия сайта', 'Помогаем бизнесу получать обращения: базовое SEO, GEO-продвижение, SEO-блог, веб-аналитика, дизайн и оптимизация конверсии. Решения Damvi. Обсудим задачу.'],
+  'less-manual-work': ['Автоматизация бизнеса и сокращение ручной работы', 'ИИ, чат-боты, собственная CRM, интеграции и обработка данных. Подбираем решение для автоматизации процессов вашей компании. Damvi. Обсудим ваш процесс.'],
+  'launch-product': ['Разработка цифровых продуктов для бизнеса', 'Разработка сайтов, веб-сервисов, MVP, мобильных и десктопных приложений, чат-ботов и Mini Apps. От идеи до запуска с Damvi. Обсудим первую версию.']
 };
 const legalMeta = {
-  privacy: ['Политика обработки персональных данных', 'Порядок обработки персональных данных, цели, сроки хранения, права заявителей и контакты оператора DAMVI.'],
-  consent: ['Согласие на обработку персональных данных', 'Отдельное согласие для заявки DAMVI: состав данных, цели обработки, сроки и отзыв по адресу office@damvi.ru.'],
-  legal: ['Информация об исполнителе и услугах', 'Информация об исполнителе DAMVI, согласовании задач, стоимости, оплате, чеках и порядке обращений заказчиков.']
+  privacy: ['Политика обработки персональных данных', 'Политика Damvi: какие данные нужны для заявки, как они поступают на office@damvi.ru, сколько хранятся и как запросить доступ, исправление или удаление.'],
+  consent: ['Согласие на обработку персональных данных', 'Отдельное согласие для формы Damvi: описание задачи, контакт и телефон, цель обработки, сроки хранения и порядок отзыва по адресу office@damvi.ru.'],
+  legal: ['Информация об исполнителе и услугах', 'Кто оказывает услуги под брендом Damvi: самозанятый исполнитель, согласование задачи, цены и сроки, договор, оплата, чеки и обращения на office@damvi.ru.']
 };
 
 export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIGIN, indexable = true } = {}) {
@@ -56,56 +61,75 @@ export function getPageSeo(path, services = [], goals = {}, { origin = SITE_ORIG
   const goal = path.startsWith('/goals/') && Object.hasOwn(goals, slug) ? goals[slug] : null;
   let title, description, canonicalPath = path, noindex = !indexable;
   if (path === '/') {
-    title = 'DAMVI — агентство цифровых решений для бизнеса';
-    description = 'DAMVI — цифровое агентство для бизнеса из Перми: сайты, приложения, ИИ, автоматизация, чат-боты, SEO и GEO-продвижение. Работаем удалённо по всей России.';
-    description += ' Агентство цифровых услуг и digital-решений: полный цикл работы над согласованным цифровым продуктом — от разбора задачи и проектирования до реализации и поддержки.';
+    title = 'Damvi — агентство цифровых решений: разработка, автоматизация, продвижение';
+    description = 'Damvi — агентство цифровых решений из Перми: сайты, чат-боты, ИИ, автоматизация, SEO и GEO. Работаем удалённо по всей России. Обсудим задачу бизнеса.';
   } else if (service) {
-    title = `${serviceTitles[service.slug] || service.title} — DAMVI`;
+    title = `${serviceTitles[service.slug] || service.title} — Damvi`;
     const summary = serviceDescriptions[service.slug] || service.subtitle.split(/(?<=[.!?])\s/)[0];
-    description = `${summary} ${service.price[0].toUpperCase() + service.price.slice(1)}. DAMVI.`;
+    description = `${summary} ${service.price[0].toUpperCase() + service.price.slice(1)}. Damvi.`;
     canonicalPath = '/services/' + service.slug;
   } else if (goal) {
     [title, description] = goalMeta[slug];
-    title += ' — DAMVI';
+    title += ' — Damvi';
   } else if (path === '/services/other') {
-    title = 'Услуги разработки, интеграций, аналитики и дизайна — DAMVI';
-    description = 'Веб-приложения, MVP, мобильные приложения, CRM, интеграции, парсеры, аналитика, оптимизация конверсии и веб-дизайн. Решения DAMVI под задачи бизнеса.';
+    title = 'Услуги разработки, интеграций, аналитики и дизайна — Damvi';
+    description = 'Веб-приложения, MVP, мобильные приложения, CRM, интеграции, парсеры, аналитика, оптимизация конверсии и веб-дизайн. Решения Damvi под задачи бизнеса.';
   } else if (path === '/projects') {
-    title = 'Наши работы: сайты и цифровые проекты — DAMVI';
-    description = 'Проекты DAMVI: сайт платформы Insol для оценки и подбора AI-разработчиков и интеграторов, сайт ресторана «Кинкали». Откройте работающие сайты.';
+    title = 'Проекты Damvi — сайты для бизнеса и цифровые решения';
+    description = 'Проекты Damvi: сайт платформы Insol для оценки и подбора AI-разработчиков и интеграторов, сайт ресторана «Кинкали». Откройте работающие сайты.';
   } else if (Object.hasOwn(legalMeta, slug) && path === '/' + slug) {
     [title, description] = legalMeta[slug];
-    title += ' — DAMVI';
-    // Unapproved privacy/consent drafts must not appear as the production policy.
-    if (slug !== 'legal') noindex = true;
+    title += ' — Damvi';
   } else {
-    title = 'Страница не найдена — DAMVI';
-    description = 'Запрошенная страница DAMVI не найдена. Перейдите на главную страницу или выберите услугу.';
+    title = 'Страница не найдена — Damvi';
+    description = 'Запрошенная страница Damvi не найдена. Перейдите на главную страницу или выберите услугу.';
     noindex = true;
   }
   const canonical = origin + (canonicalPath === '/' ? '/' : canonicalPath);
-  const graph = [{ '@type': 'WebSite', '@id': origin + '/#website', url: origin + '/', name: 'DAMVI', alternateName: 'Дамви', inLanguage: 'ru-RU' }];
+  const graph = [{ '@type': 'WebSite', '@id': origin + '/#website', url: origin + '/', name: 'Damvi', alternateName: 'Дамви', inLanguage: 'ru-RU' }];
+  const brandId = origin + '/#brand';
+  graph.push({ '@type': 'Brand', '@id': brandId, name: 'Damvi', alternateName: 'Дамви', url: origin + '/', logo: origin + '/assets/damvi-logo-white.svg', sameAs: [agencyProfile.telegram], description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' });
+  graph[0].publisher = { '@id': origin + '/legal#provider' };
   const page = { '@type': goal || path === '/services/other' || path === '/projects' ? 'CollectionPage' : 'WebPage', '@id': canonical + '#page', url: canonical, name: title, description, inLanguage: 'ru-RU', isPartOf: { '@id': origin + '/#website' } };
   graph.push(page);
   if (path === '/') {
     // Summarize the agency and process already represented by the homepage.
     // Do not recreate deleted FAQ or city lists as hidden structured content.
-    graph[0].description = description;
-    page.about = { '@type': 'Brand', '@id': origin + '/#brand', name: 'DAMVI', description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' };
+    graph[0].description = agencyDescription;
+    page.about = { '@type': 'Brand', '@id': origin + '/#brand', name: 'Damvi', description: 'Цифровые решения для бизнеса: разработка, автоматизация и продвижение.' };
   }
   if (service) {
-    const entity = { '@type': 'Service', '@id': canonical + '#service', name: service.title, serviceType: service.name, description: service.subtitle, url: canonical, areaServed: { '@type': 'Country', name: 'Россия' }, brand: { '@type': 'Brand', name: 'DAMVI' } };
+    const entity = { '@type': 'Service', '@id': canonical + '#service', name: service.title, serviceType: service.name, description: service.subtitle, url: canonical, areaServed: { '@type': 'Country', name: 'Россия' }, brand: { '@type': 'Brand', name: 'Damvi' } };
     graph.push(entity);
     entity.brand['@id'] = origin + '/#brand';
     entity.mainEntityOfPage = { '@id': page['@id'] };
     page.mainEntity = { '@id': entity['@id'] };
+    entity.provider = { '@id': origin + '/legal#provider' };
   }
-  if (path !== '/' && title !== 'Страница не найдена — DAMVI') {
+  if (path === '/' || goal || path === '/services/other') {
+    const groups = path === '/' ? Object.entries(goals).map(([id, item]) => ({ name: item.title, url: origin + '/goals/' + id }))
+      : services.filter(item => goal ? goal.services.includes(item.slug) : !['websites', 'chatbots', 'ai-automation', 'geo', 'seo', 'seo-blog'].includes(item.slug))
+        .map(item => ({ name: item.name, url: origin + '/services/' + item.slug }));
+    const catalogId = canonical + '#catalog';
+    graph.push({ '@type': 'OfferCatalog', '@id': catalogId, name: goal?.title || 'Цифровые решения Damvi для бизнеса', itemListElement: groups.map(item => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: item.name, url: item.url } })) });
+    page.mainEntity = { '@id': catalogId };
+  }
+  if (path === '/legal') {
+    graph.push({ '@type': 'Person', '@id': origin + '/legal#provider', name: 'Пьянков Никита Алексеевич', url: canonical, email: agencyProfile.email, description: agencyProfile.status });
+    page.mainEntity = { '@id': origin + '/legal#provider' };
+  }
+  const answers = path === '/' ? homeFaq : goal ? goalContent[slug].faq : service ? getServiceFaq(service) : [];
+  if (answers.length) {
+    const faqId = canonical + '#faq';
+    graph.push({ '@type': 'FAQPage', '@id': faqId, isPartOf: { '@id': page['@id'] }, mainEntity: answers.map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })) });
+    page.hasPart = { '@id': faqId };
+  }
+  if (path !== '/' && title !== 'Страница не найдена — Damvi') {
     const breadcrumbId = canonical + '#breadcrumb';
-    graph.push({ '@type': 'BreadcrumbList', '@id': breadcrumbId, itemListElement: [{ '@type': 'ListItem', position: 1, name: 'DAMVI', item: origin + '/' }, { '@type': 'ListItem', position: 2, name: service?.name || goal?.title || title.replace(' — DAMVI', ''), item: canonical }] });
+    graph.push({ '@type': 'BreadcrumbList', '@id': breadcrumbId, itemListElement: [{ '@type': 'ListItem', position: 1, name: 'Damvi', item: origin + '/' }, { '@type': 'ListItem', position: 2, name: service?.name || goal?.title || title.replace(' — Damvi', ''), item: canonical }] });
     page.breadcrumb = { '@id': breadcrumbId };
   }
-  return { title, description, canonical, noindex, jsonLd: { '@context': 'https://schema.org', '@graph': graph } };
+  return { title, description, canonical, noindex, image: OG_IMAGE, jsonLd: { '@context': 'https://schema.org', '@graph': graph } };
 }
 
 export function applyPageSeo(seo) {
@@ -119,8 +143,14 @@ export function applyPageSeo(seo) {
   meta('description', seo.description);
   meta('robots', seo.noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large');
   meta('og:title', seo.title, true); meta('og:description', seo.description, true);
-  meta('og:url', seo.canonical, true); meta('og:site_name', 'DAMVI', true);
+  meta('og:url', seo.canonical, true); meta('og:site_name', 'Damvi', true);
   meta('og:type', 'website', true); meta('og:locale', 'ru_RU', true);
+  meta('og:image', seo.image, true); meta('og:image:secure_url', seo.image, true);
+  meta('og:image:type', 'image/jpeg', true); meta('og:image:width', '1200', true); meta('og:image:height', '630', true);
+  meta('og:image:alt', 'Damvi — цифровые решения для бизнеса', true);
+  meta('twitter:card', 'summary_large_image'); meta('twitter:title', seo.title);
+  meta('twitter:description', seo.description); meta('twitter:image', seo.image);
+  meta('twitter:image:alt', 'Damvi — цифровые решения для бизнеса');
   let canonical = document.head.querySelector('link[rel="canonical"]');
   if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.append(canonical); }
   canonical.href = seo.canonical;

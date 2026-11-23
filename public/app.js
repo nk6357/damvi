@@ -1,5 +1,6 @@
 import { getPageSeo, applyPageSeo } from './seo.js';
-import { serviceSearchContent, relatedServiceSlugs, serviceSearchLabels, serviceProblemAnswers } from './service-search-content.js';
+import { relatedServiceSlugs, serviceSearchLabels, getServiceFaq } from './service-search-content.js';
+import { agencyProfile, homeFaq, goalContent } from './search-content.js';
 
 const config = {
   contacts: { email: '', telegram: { label: '@nk6357', url: 'https://t.me/nk6357' }, phone: '' },
@@ -11,12 +12,12 @@ const config = {
       facts: [['Стоимость', 'от 15 000 ₽'], ['Сроки', 'от 3 дней'], ['Гарантия', 'Договор, чеки и 30 дней бесплатной поддержки после сдачи']],
       sections: [
         { title: 'Какую проблему бизнеса решает сайт?', paragraphs: ['Отсутствие сайта, устаревший дизайн, отсутствие мобильной адаптации или неработающие формы оплаты и связи мешают бизнесу принимать заявки. Без трафика сайт сам по себе не приводит клиентов, но при запущенной рекламе некачественный ресурс просто сжигает бюджет.', 'Вы получаете рабочий инструмент, который корректно открывается на любом устройстве, сразу объясняет ценность предложения и доводит пользователя до покупки или обращения.'] },
-        { title: 'Что входит в разработку сайта в DAMVI?', items: [
+        { title: 'Что входит в разработку сайта в Damvi?', items: [
           ['Прототип и продающая структура', 'Проектируем логику страницы под вашу нишу, чтобы посетитель легко находил информацию и совершал целевое действие.'],
           ['Современный адаптивный дизайн', 'Обеспечиваем аккуратное отображение на компьютерах, планшетах и смартфонах.'],
           ['Интеграции и формы связи', 'Настраиваем мгновенную передачу заявок с сайта в Telegram, CRM или на электронную почту.']
         ] },
-        { title: 'Почему выбирают DAMVI?', items: [
+        { title: 'Почему выбирают Damvi?', items: [
           ['Работаем на результат', 'Не делаем продукт ради галочки — решаем конкретную проблему бизнеса.'],
           ['Фиксируем стоимость', 'Цена согласовывается на старте и не вырастает в процессе без изменения задачи.'],
           ['Работаем прозрачно', 'Оформляем договор, чеки и закрывающие документы.']
@@ -52,7 +53,7 @@ const config = {
       subtitle: 'Освободите себя и сотрудников от рутины. Внедряем нейросети и кастомные алгоритмы, которые экономят десятки часов рабочего времени.',
       facts: [['Стоимость', 'от 15 000 ₽'], ['Сроки', 'от 4 дней']],
       sections: [
-        { title: 'Ручная работа съедает прибыль', paragraphs: ['Каждый день сотрудники тратят время на перенос данных в CRM, ручную отправку сообщений, обработку документов и составление типовых ответов. DAMVI переводит повторяющиеся задачи на автопилот.'] },
+        { title: 'Ручная работа съедает прибыль', paragraphs: ['Каждый день сотрудники тратят время на перенос данных в CRM, ручную отправку сообщений, обработку документов и составление типовых ответов. Damvi переводит повторяющиеся задачи на автопилот.'] },
         { title: 'Что мы автоматизируем?', items: [
           ['Умные ИИ-ассистенты', 'Настраиваем нейросети на базе внутренних материалов для быстрых ответов клиентам и сотрудникам.'],
           ['Сквозной сбор данных', 'Связываем сайты, мессенджеры, таблицы и CRM в единую цепочку.'],
@@ -68,7 +69,7 @@ const config = {
       facts: [['Стоимость', '10 000 ₽'], ['Формат', 'фиксированная стоимость']],
       sections: [
         { title: 'Что такое GEO?', paragraphs: ['Всё больше людей не листают десятки сайтов, а задают прямой вопрос нейросетям: какую компанию выбрать или где найти подходящее решение. ИИ собирает данные из открытых источников и формирует несколько конкретных рекомендаций.', 'GEO — это комплекс мер, который помогает алгоритмам корректно понять ваш бизнес и включать его в релевантные ответы.'] },
-        { title: 'Что входит в GEO-продвижение от DAMVI?', items: [
+        { title: 'Что входит в GEO-продвижение от Damvi?', items: [
           ['Анализ присутствия', 'Проверяем, что нейросети уже знают о вашем бизнесе и нише.'],
           ['Оптимизация цифрового следа', 'Формируем экспертное окружение, упоминания и структурированные данные, которые учитывают нейросетевые модели.'],
           ['Адаптация сайта под ИИ', 'Создаём и корректируем смысловые блоки для восприятия алгоритмами Алиса AI, ChatGPT, Gemini и других систем.']
@@ -116,12 +117,14 @@ const config = {
   otherServices: null,
   projects: [
     {
+      slug: 'insol',
       name: 'Сайт для B2B-компании Insol',
       type: 'Сайт платформы',
       description: 'Сайт платформы оценки и подбора проверенных AI-разработчиков/интеграторов для бизнеса.',
       url: 'https://insol-dvlp.ru'
     },
     {
+      slug: 'kinkali',
       name: 'Кинкали',
       type: 'Сайт ресторана',
       description: 'Сайт ресторана грузинской кухни «Кинкали» в Перми.',
@@ -132,13 +135,14 @@ const config = {
 
 const arrow = '<span class="process-arrow" aria-hidden="true">↓</span>';
 const escape = value => String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
+const brandText = value => escape(value).replaceAll('Damvi', '<span class="brand-name">Damvi</span>');
 
 const pages = document.querySelector('meta[name="damvi-pages-base"]');
 const basePath = pages?.content || '';
 const withBasePath = html => basePath ? html.replace(/(\b(?:href|src)=")\/(?!\/)/g, '$1' + basePath + '/') : html;
 
 function siteNav() {
-  return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="DAMVI — на главную"><img src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/">Главная</a><a href="/#services">Наши услуги</a><a href="/projects">Наши работы</a><a class="nav-cta button-shine" href="/#contact-form">Обсудить задачу</a></nav></div></header>`;
+  return `<header class="site-nav" id="site-nav"><div class="site-nav-inner"><a class="nav-logo" href="/" aria-label="Damvi — на главную"><img src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="Damvi" /></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Открыть меню"><span></span><span></span><span></span></button><nav class="nav-links" id="nav-links" aria-label="Основное меню"><a href="/">Главная</a><a href="/#services">Наши услуги</a><a href="/projects">Наши работы</a><a class="nav-cta button-shine" href="/#contact-form">Обсудить задачу</a></nav></div></header>`;
 }
 
 function footer() {
@@ -147,7 +151,7 @@ function footer() {
     config.contacts.telegram && `<a href="${escape(config.contacts.telegram.url)}" target="_blank" rel="noreferrer">Telegram</a>`,
     config.contacts.phone && `<a href="tel:${escape(config.contacts.phone.replace(/\s/g, ''))}">${escape(config.contacts.phone)}</a>`
   ].filter(Boolean).join('');
-  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="DAMVI" /><p>Агентство цифровых решений для бизнеса</p></div><div class="footer-contact">${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}<nav class="footer-legal" aria-label="Правовые документы"><a href="/privacy">Политика обработки данных</a><a href="/consent">Согласие на обработку данных</a><a href="/legal">Информация об исполнителе</a></nav></div></div><div class="footer-bottom">© ${new Date().getFullYear()} DAMVI</div></footer>`;
+  return `<footer class="site-footer"><div class="footer-grid"><div class="footer-brand"><img loading="lazy" src="/assets/damvi-logo-white.svg" width="4096" height="1365" alt="Damvi" /><p>Агентство цифровых решений для бизнеса</p></div><div class="footer-contact">${contacts ? `<address id="contacts"><p class="footer-label">Контакты</p>${contacts}</address>` : ''}<nav class="footer-legal" aria-label="Правовые документы"><a href="/privacy">Политика обработки данных</a><a href="/consent">Согласие на обработку данных</a><a href="/legal">Информация об исполнителе</a></nav></div></div><div class="footer-bottom">© ${new Date().getFullYear()} Damvi</div></footer>`;
 }
 
 function form() {
@@ -186,22 +190,32 @@ function servicesRows(list, variant = '') {
 
 function renderServiceSection(section) {
   const paragraphs = (section.paragraphs || []).map(paragraph => `<p>${escape(paragraph)}</p>`).join('');
-  const items = (section.items || []).length ? `<ol class="service-detail-list">${section.items.map(([title, text]) => `<li><div><h4>${escape(title)}</h4><p>${escape(text)}</p></div></li>`).join('')}</ol>` : '';
-  return `<article class="service-detail-section"><div><h3>${escape(section.title)}</h3>${paragraphs}${items}</div></article>`;
+  const items = (section.items || []).length ? `<ol class="service-detail-list">${section.items.map(([title, text]) => `<li><div><h4>${brandText(title)}</h4><p>${escape(text)}</p></div></li>`).join('')}</ol>` : '';
+  return `<article class="service-detail-section"><div><h3>${brandText(section.title)}</h3>${paragraphs}${items}</div></article>`;
 }
 
 function renderServiceSearchContent(service) {
-  const answers = [...(serviceSearchContent[service.slug] || []), ...(serviceProblemAnswers[service.slug] ? [serviceProblemAnswers[service.slug]] : [])];
-  const pricing = ['Как определяются стоимость и сроки?', `Для услуги на сайте указано: ${service.price}. Пометка «от» означает минимальный бюджет входа. Итоговый объём, цену, сроки и дополнительные расходы согласуем по вашей задаче до начала работ. Работаем удалённо из Перми по всей России.`];
-  const faq = [...answers, pricing].map(([question, answer]) => `<details class="service-faq-item"><summary>${escape(question)}</summary><p>${escape(answer)}</p></details>`).join('');
+  const faq = renderAnswers(getServiceFaq(service));
   const related = (relatedServiceSlugs[service.slug] || []).map(slug => `<a href="/services/${escape(slug)}">${escape(serviceSearchLabels[slug])}</a>`).join('');
   return `<section class="service-search-content" aria-labelledby="service-questions"><h2 id="service-questions">Вопросы перед началом работы</h2>${faq}${related ? `<nav class="related-services" aria-label="Связанные услуги"><h3>Смежные решения</h3>${related}</nav>` : ''}</section>`;
+}
+
+function renderAnswers(answers) {
+  return answers.map(([question, answer]) => `<details class="service-faq-item"><summary><h3>${brandText(question)}</h3></summary><p>${escape(answer)}</p></details>`).join('');
+}
+
+function questionSection(answers, id) {
+  return `<section class="service-search-content" aria-labelledby="${id}"><h2 id="${id}">Вопросы перед началом работы</h2>${renderAnswers(answers)}</section>`;
+}
+
+function goalScenarios(slug) {
+  return `<section class="service-search-content" aria-labelledby="goal-scenarios"><h2 id="goal-scenarios">От задачи к решению</h2>${goalContent[slug].scenarios.map(([problem, solution, tools, result]) => `<article class="service-faq-item"><h3>${escape(problem)}</h3><p><strong>Решение:</strong> ${escape(solution)}</p><p><strong>Инструменты:</strong> ${escape(tools)}</p><p><strong>Результат:</strong> ${escape(result)}</p></article>`).join('')}</section>`;
 }
 
 function serviceDetails(service) {
   const telegram = telegramDraft(`Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
-  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${escape(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}${renderServiceSearchContent(service)}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${brandText(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}${renderServiceSearchContent(service)}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать в Telegram</a><a class="button button-red button-shine" href="tel:${escape(agencyProfile.phone)}">Позвонить</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
 }
 
 function telegramDraft(message) {
@@ -243,19 +257,19 @@ function goalPage(slug) {
   const services = goal.services.map(id => catalog.find(service => service.slug === id));
   return `${innerHeader(goal.title, 'ЗАДАЧА БИЗНЕСА', '/#services', 'direction-title')}<section class="services-section goal-solutions">
     <div class="section-heading"><div><h2>Подходящие решения</h2></div><div class="section-heading-copy">
-      <p>${escape(goal.description)}</p>
+      <p>${escape(goalContent[slug].summary)}</p>
       <p>Цены с пометкой «от» — минимальная стоимость входа в разработку или продвижение.</p>
     </div></div>${servicesRows(services)}
-  </section>${footer()}`;
+  </section>${goalScenarios(slug)}${questionSection(goalContent[slug].faq, 'goal-questions')}${footer()}`;
 }
 
 function home() {
-  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2><p>Проекты и результаты собраны на отдельной странице.</p></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${footer()}`;
+  return `<section class="hero section-split"><div class="hero-form" id="discuss"><div class="hero-copy"><h1><span class="accent">ОПИШИТЕ ПРОБЛЕМУ,</span><span>КОТОРАЯ МЕШАЕТ</span><span>ЗАРАБАТЫВАТЬ</span></h1><p class="hero-lead">Начнём с проблемы, а не с готового решения. Расскажите, где бизнес теряет время, заявки или деньги. Мы разберём задачу и предложим следующий шаг.</p></div>${form()}</div><div class="hero-brand"><div class="hero-brand-content"><div class="hero-brand-title">АГЕНТСТВО<br />ЦИФРОВЫХ<br />РЕШЕНИЙ<br />ДЛЯ БИЗНЕСА</div><p class="hero-brand-note">Разработка · Автоматизация · Продвижение</p></div><img class="hero-monogram" src="/assets/damvi-avatar-solid-dark.svg" alt="" aria-hidden="true" /></div></section><section class="approach section-split" id="approach"><div class="approach-copy"><h2><span>ПРОБЛЕМА ЕСТЬ —</span>РЕШЕНИЕ НАЙДЁМ</h2><p>${escape(agencyProfile.summary)}</p><p>Мы разбираемся, что именно мешает бизнесу зарабатывать, и создаём цифровые решения под конкретную задачу. Не делаем продукт ради галочки — помогаем бизнесу двигаться вперёд.</p></div><div class="process" aria-label="Процесс работы"><ol><li>Разбираемся</li>${arrow}<li>Проектируем</li>${arrow}<li>Реализуем</li>${arrow}<li>Поддерживаем</li></ol></div></section>${businessGoals()}<section class="works" id="works"><div><h2>НАШИ РАБОТЫ</h2></div><a class="button button-red" href="/projects"><span>Посмотреть проекты</span></a></section>${footer()}`;
 }
 
 function innerHeader(title, eyebrow = 'НАПРАВЛЕНИЕ', backHref, headingClass = '') {
   const back = backHref ? `<nav class="service-back" aria-label="Навигация направления"><a class="button button-red button-back" href="${escape(backHref)}">Назад</a></nav>` : '';
-  return `<header class="inner-header${backHref ? ' inner-header-with-back' : ''}">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1 class="${headingClass}">${escape(title)}</h1>${back}</header>`;
+  return `<header class="inner-header${backHref ? ' inner-header-with-back' : ''}">${eyebrow ? `<p>${eyebrow}</p>` : ''}<h1 class="${headingClass}">${brandText(title)}</h1>${back}</header>`;
 }
 function servicePage(slug) {
   if (slug === 'other') return otherPage();
@@ -265,7 +279,7 @@ function servicePage(slug) {
   return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent, 'direction-title')}${serviceDetails(service)}${footer()}`;
 }
 function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services', 'direction-title')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2 class="direction-title">Другие направления</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
-function projectsPage() { return `${innerHeader('Наши работы', '', '/#works', 'direction-title')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
+function projectsPage() { return `${innerHeader('Наши работы', '', '/#works', 'direction-title')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card" id="${escape(project.slug)}"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
 function legalPage(doc) {
   const paragraphs = doc.text.split(/\n/).filter(Boolean).slice(1).map(line => {
     const tag = /^\d+\.\s/.test(line) ? 'h2' : 'p';
@@ -514,6 +528,11 @@ function setupForm() {
     };
     status.textContent = '';
     status.className = 'form-status';
+    if (location.hostname === 'damvi.ru' && location.protocol !== 'https:') {
+      status.classList.add('is-error');
+      status.textContent = 'Для безопасной отправки заявки откройте https://damvi.ru. Защищённое соединение должно быть доступно.';
+      return;
+    }
     if (showErrors(validateClient(data))) return;
     if (pages) {
       status.classList.add('is-error');

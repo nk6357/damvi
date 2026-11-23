@@ -1,0 +1,9 @@
+date,source,property,metric,value,status
+2026-11-23,production,https://damvi.ru,https_pages_200,26,verified
+2026-11-23,production,https://damvi.ru,sitemap_urls,24,verified
+2026-11-23,yandex_webmaster,https://damvi.ru,indexed_pages,,ownership_verification_pending
+2026-11-23,google_search_console,https://damvi.ru,indexed_pages,,sign_in_pending
+2026-11-23,yandex_webmaster,https://damvi.ru,search_clicks,,not_measured
+2026-11-23,google_search_console,https://damvi.ru,search_clicks,,not_measured
+2026-11-23,ai_search,https://damvi.ru,citations,,not_measured
+2026-11-23,mailbox,office@damvi.ru,production_leads,,not_measured_test_excluded

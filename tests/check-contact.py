@@ -111,7 +111,7 @@ with tempfile.TemporaryDirectory(prefix='damvi-mail-test-') as directory:
         mail = BytesParser(policy=email.policy.default).parsebytes(captured['message'].encode())
         assert str(mail['Subject']) == 'Заявка с сайта 🔥'
         assert mail['To'] == 'office@damvi.ru'
-        assert str(mail['From']) == 'DAMVI <office@damvi.ru>'
+        assert str(mail['From']) == 'Damvi <office@damvi.ru>'
         assert not mail['Bcc'] and not mail['Cc'] and not mail['Reply-To']
         assert captured['args'][1:] == ['-foffice@damvi.ru']
         assert mail.get_content_type() == 'multipart/alternative'

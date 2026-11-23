@@ -26,6 +26,8 @@ with tempfile.TemporaryDirectory(prefix='damvi-apache-test-') as directory:
         file.parent.mkdir(parents=True, exist_ok=True)
         file.write_text('CANARY_NOT_PUBLIC')
     (public / 'index.html').write_text('PUBLIC_OK')
+    for name in ['llms.txt', 'llms-full.txt']:
+        (public / name).write_text('DAMVI — цифровые решения', encoding='utf-8')
     (public / '404.html').write_text('NOT_FOUND')
     (public / '_pages/services').mkdir(parents=True)
     (public / '_pages/services/chatbots.html').write_text('CHATBOTS_OK')
@@ -72,11 +74,20 @@ with tempfile.TemporaryDirectory(prefix='damvi-apache-test-') as directory:
         assert headers['X-Frame-Options'] == 'SAMEORIGIN'
         assert 'camera=()' in headers['Permissions-Policy']
         assert 'Strict-Transport-Security' not in headers, 'HSTS must not be advertised over HTTP'
+        assert 'X-Robots-Tag' not in headers, 'AI file noindex leaked onto normal HTML'
+        for path in ['/llms.txt', '/llms-full.txt']:
+            status, file_headers, text = get(path)
+            assert status == 200 and 'цифровые решения' in text
+            assert file_headers.get('X-Robots-Tag') == 'noindex, follow'
+            assert 'charset=utf-8' in file_headers['Content-Type'].lower()
         for path in ['/.env', '/%2eenv', '/.git/config', '/backup.zip', '/dump.sql', '/index.html.bak', '/private/contact.php', '/tests/test.txt', '/seo/keys.csv', '/api/contact-lib.php', '/route-map.json', '/README.md', '/_pages/services/chatbots.html']:
             status, _, body = get(path)
             assert status == 404 and 'CANARY_NOT_PUBLIC' not in body, (path, status, body)
         assert get('/.well-known/acme-challenge/test')[2] == 'ACME_OK'
         assert get('/services/chatbots')[2] == 'CHATBOTS_OK', 'Internal SEO rewrite broken'
+        status, headers, _ = get('/services/chatbots/')
+        assert status == 301 and headers['Location'].endswith('/services/chatbots'), 'Canonical trailing-slash redirect broken'
+        assert get('/missing/')[0] == 404, 'Unknown paths must not turn into redirects or soft 404s'
         assert get('/assets/test.css')[0] == 200
         assert get('/missing')[0] == 404
         assert get('/', method='POST', body='test')[0] == 405

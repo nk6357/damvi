@@ -1,0 +1,106 @@
+{
+  "/": {
+    "date": "2026-11-23",
+    "hash": "2bba337823e52cd9cf650b4c803c03ff6d69746d91d0f0752022f4265c223fc8"
+  },
+  "/projects": {
+    "date": "2026-11-23",
+    "hash": "ebb610d1d81dfd5d970314b22235a4e24fcde75812b9108600e54dc768ab0203"
+  },
+  "/services/other": {
+    "date": "2026-11-23",
+    "hash": "b8fcc10cd36025e24883aeccf5d83b700866bfa0cd28bd3398ddf9efec77fe6f"
+  },
+  "/services/websites": {
+    "date": "2026-11-23",
+    "hash": "92463957782c8014afb0f20b3b4443d85be929c2650d0b5db1f37c4f49404d11"
+  },
+  "/services/chatbots": {
+    "date": "2026-11-23",
+    "hash": "e47ea3a8ba1304225726035e30f7b7885ab2149dfc9a9f508518303f76f3fcc6"
+  },
+  "/services/ai-automation": {
+    "date": "2026-11-23",
+    "hash": "83756c995ca2ab14a859c898c6006f4733a0f688780cee7143b93288b9f8a3a6"
+  },
+  "/services/geo": {
+    "date": "2026-11-23",
+    "hash": "ef8f2fd2f75c3200e819f345e317b1bb754c2c00a56bc8a19ab9b6d28c70109f"
+  },
+  "/services/seo": {
+    "date": "2026-11-23",
+    "hash": "456d869f361eee6e4f2cec6c0d1b7f973a40632a4de747cfd606aa67f86ecb81"
+  },
+  "/services/seo-blog": {
+    "date": "2026-11-23",
+    "hash": "e5160a5da20e288300ee837e4d0b6f124e79ab6d299e078500157a9dfc13059e"
+  },
+  "/services/web-apps": {
+    "date": "2026-11-23",
+    "hash": "435c37593a2fb3160f0cadb39ef16a03b47e1fc368f8ca933f754416965fadc5"
+  },
+  "/services/mvp-prototypes": {
+    "date": "2026-11-23",
+    "hash": "490f6f1c90cdcb2b62ec7cdf778901d876cda4278c9ea41976229823dcd92239"
+  },
+  "/services/mobile-apps": {
+    "date": "2026-11-23",
+    "hash": "85309efdcacfa6d2b8536d72945c086f3c465c8457f642a8e15e091133a1b9cc"
+  },
+  "/services/desktop-apps": {
+    "date": "2026-11-23",
+    "hash": "4aa1edd75f1ecd9c228f0fc42d019df492202fe763295a404b82d4de1c6a26aa"
+  },
+  "/services/mini-apps": {
+    "date": "2026-11-23",
+    "hash": "1cddc00b8433c25ae8540be0dbe980a56a9ecb199efe0d9455d7d86051200b1a"
+  },
+  "/services/custom-crm": {
+    "date": "2026-11-23",
+    "hash": "8d8bb5bc5083ace8c65bf5aebd94fb97b3aef4b061afcc9b7d73b8ce720065d1"
+  },
+  "/services/integrations": {
+    "date": "2026-11-23",
+    "hash": "d0ac358a72712dfa8488dd9fa6c3f6fa4e74b98e131b0b9002def4e853aeb4e9"
+  },
+  "/services/data-parsers": {
+    "date": "2026-11-23",
+    "hash": "7182d1c7df160279e560626befbd8a5df0897ff7bee9dc08653e9317db9db69a"
+  },
+  "/services/web-analytics": {
+    "date": "2026-11-23",
+    "hash": "98c90433650eaa48b6464b5b95a4c3f908dc95defe326304fedb551bee215521"
+  },
+  "/services/conversion-optimization": {
+    "date": "2026-11-23",
+    "hash": "f81a480ea9f272014a68aa6fcf949ca9f735d82d3e046daa7eb150af6f673f25"
+  },
+  "/services/web-design": {
+    "date": "2026-11-23",
+    "hash": "3a6b6d84b9c1d02f801e773169b5361cdc146ececa0634df723f26bf9f3f67d6"
+  },
+  "/goals/more-clients": {
+    "date": "2026-11-23",
+    "hash": "0f8fc4dd60515e3863073d2f0545c8769bca033648437f962813bf3878689e27"
+  },
+  "/goals/less-manual-work": {
+    "date": "2026-11-23",
+    "hash": "28054e0a4e85ce62f599ff00789c80efc6ac17302c82b6b5b5a4b07a5274bd2c"
+  },
+  "/goals/launch-product": {
+    "date": "2026-11-23",
+    "hash": "c3b4e5459427449f3c48653001c8a9cbf8ea251715a6f440a3ba6831393edd62"
+  },
+  "/privacy": {
+    "date": "2026-11-23",
+    "hash": "90b335a7f97a18afd8993dc1b177f6384378ed4e4b38c4afbc2a10d6f56b943e"
+  },
+  "/consent": {
+    "date": "2026-11-23",
+    "hash": "b377221fcb6c16738800b3eb474051bf9966477320770318210faf225f650584"
+  },
+  "/legal": {
+    "date": "2026-11-23",
+    "hash": "c7df36ab55f509dd1b33ee85fe5e4d9ceb240266ebcb986a5e2e35e79308cefa"
+  }
+}

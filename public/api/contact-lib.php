@@ -106,14 +106,14 @@ function compose(array $fields, int $now): array {
     $escape = static fn(string $value): string => htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     $phone = '+' . preg_replace('/\D/', '', $fields['phone']);
     $received = gmdate('Y-m-d\TH:i:s\Z', $now);
-    $plain = "Заявка с сайта 🔥\n\nОпишите, что мешает бизнесу зарабатывать:\n{$fields['problem']}\n\nКуда вам ответить?\n{$fields['contact']}\n\nНомер для связи:\n{$phone}\n\nСогласие на обработку персональных данных: подтверждено отдельным флажком.\nВерсия согласия: 2026-11-23.2-preview\nПолучено (UTC): {$received}\n";
+    $plain = "Заявка с сайта 🔥\n\nОпишите, что мешает бизнесу зарабатывать:\n{$fields['problem']}\n\nКуда вам ответить?\n{$fields['contact']}\n\nНомер для связи:\n{$phone}\n\nСогласие на обработку персональных данных: подтверждено отдельным флажком.\nВерсия согласия: 2026-11-23.3\nПолучено (UTC): {$received}\n";
     $html = '<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;padding:24px;background:#f5f5f5;color:#171717;font-family:Arial,Helvetica,sans-serif">'
         . '<table role="presentation" style="width:100%;max-width:640px;margin:0 auto;border-collapse:collapse"><tr><td style="padding:24px;background:#fff;border:1px solid #e5e5e5;border-radius:20px;word-break:break-word">'
         . '<h1 style="margin:0 0 24px;font-size:26px;line-height:1.2"><strong>Заявка с сайта 🔥</strong></h1>'
         . '<p><strong>Опишите, что мешает бизнесу зарабатывать</strong></p><p>' . nl2br($escape($fields['problem']), false) . '</p>'
         . '<p><strong>Куда вам ответить?</strong></p><p>' . $escape($fields['contact']) . '</p>'
         . '<p><strong>Номер для связи</strong></p><p><a href="tel:' . $escape($phone) . '" style="color:#E63946;font-size:20px">' . $escape($fields['phone']) . '</a></p>'
-        . '<p style="margin-top:24px;font-size:12px;color:#666">Согласие на обработку персональных данных подтверждено отдельным флажком.<br>Версия согласия: 2026-11-23.2-preview<br>Получено (UTC): ' . $received . '</p>'
+        . '<p style="margin-top:24px;font-size:12px;color:#666">Согласие на обработку персональных данных подтверждено отдельным флажком.<br>Версия согласия: 2026-11-23.3<br>Получено (UTC): ' . $received . '</p>'
         . '</td></tr></table></body></html>';
     $boundary = 'damvi_' . bin2hex(random_bytes(24));
     $body = '';
@@ -122,7 +122,7 @@ function compose(array $fields, int $now): array {
     }
     $body .= '--' . $boundary . "--\r\n";
     return ['subject' => '=?UTF-8?B?' . base64_encode('Заявка с сайта 🔥') . '?=', 'body' => $body, 'headers' => [
-        'From' => 'DAMVI <office@damvi.ru>',
+        'From' => 'Damvi <office@damvi.ru>',
         'MIME-Version' => '1.0',
         'Content-Type' => 'multipart/alternative; boundary="' . $boundary . '"',
         'Auto-Submitted' => 'auto-generated',

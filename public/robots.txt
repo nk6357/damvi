@@ -1,2 +1,46 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: TelegramBot
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+User-agent: vkShare
+Allow: /
+Disallow: /api/
+Disallow: /_pages/
+
+Sitemap: https://damvi.ru/sitemap.xml

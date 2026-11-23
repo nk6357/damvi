@@ -4,3 +4,4 @@ node_modules/
 private/
 beget-release/
 .DS_Store
+outputs/

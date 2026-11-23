@@ -1,6 +1,10 @@
 Options -Indexes
 DirectoryIndex index.html
 LimitRequestBody 20000
+<IfModule mod_mime.c>
+AddType text/plain .txt
+AddCharset UTF-8 .txt .html .xml
+</IfModule>
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
@@ -10,6 +14,9 @@ Header always set Content-Security-Policy "default-src 'none'; script-src 'self'
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 Header always set Strict-Transport-Security "max-age=86400" "expr=%{HTTPS} == 'on'"
 Header always unset X-Powered-By
+<FilesMatch "^llms(?:-full)?\.txt$">
+Header always set X-Robots-Tag "noindex, follow"
+</FilesMatch>
 </IfModule>
 <IfModule mod_deflate.c>
 <IfModule mod_filter.c>
@@ -33,6 +40,8 @@ RewriteCond %{HTTP_HOST} ^www\.damvi\.ru$ [NC]
 RewriteRule ^ https://damvi.ru%{REQUEST_URI} [R=301,END]
 RewriteRule ^_pages(?:/|$) - [R=404,END]
 RewriteRule ^services/support/?$ /services/seo-blog [R=301,END]
+RewriteCond %{DOCUMENT_ROOT}/_pages/$1.html -f
+RewriteRule ^(.+)/$ /$1 [R=301,END]
 RewriteRule ^api/contact/?$ api/contact.php [END]
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d

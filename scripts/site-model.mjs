@@ -2,7 +2,8 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { otherServices } from '../public/other-services.js';
 import { legalDocuments } from '../public/legal-documents.js';
-import { serviceSearchContent, relatedServiceSlugs, serviceSearchLabels, serviceProblemAnswers } from '../public/service-search-content.js';
+import { relatedServiceSlugs, serviceSearchLabels, getServiceFaq } from '../public/service-search-content.js';
+import { agencyProfile, homeFaq, goalContent } from '../public/search-content.js';
 
 // Execute only our pure template functions, not browser event handlers.
 // This keeps the generated HTML identical to the content visitors see.
@@ -10,7 +11,7 @@ export async function siteModel() {
   const source = await readFile('public/app.js', 'utf8');
   const prefix = source.slice(0, source.indexOf('let renderVersion = 0;')).replace(/^import .*;\n/gm, '');
   if (!prefix || !source.includes('let renderVersion = 0;')) throw new Error('Site renderer boundary not found');
-  const context = vm.createContext({ URL, Date, serviceSearchContent, relatedServiceSlugs, serviceSearchLabels, serviceProblemAnswers, document: { querySelector: () => null } });
+  const context = vm.createContext({ URL, Date, relatedServiceSlugs, serviceSearchLabels, getServiceFaq, agencyProfile, homeFaq, goalContent, document: { querySelector: () => null } });
   const model = vm.runInContext(prefix + '\n({config,goals,siteNav,home,goalPage,servicePage,projectsPage,legalPage,notFound})', context);
   model.config.otherServices = otherServices;
   model.services = [...model.config.services, ...otherServices];

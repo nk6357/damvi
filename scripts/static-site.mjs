@@ -3,6 +3,7 @@ import { join, dirname, resolve, sep, extname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { siteModel } from './site-model.mjs';
 import { getPageSeo, SITE_ORIGIN } from '../public/seo.js';
+import { robotsText, llmDocuments, pageFingerprint } from './search-assets.mjs';
 
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function copyPublicFile(source, destination) {
@@ -46,8 +47,14 @@ export async function buildStaticSite({output, base = '', preview = false, layou
   await rm(target, {recursive:true, force:true});
   await mkdir(output, {recursive:true});
   // Explicit allowlist: never include private settings or internal legal drafts.
-  await Promise.all(['app.js','seo.js','service-search-content.js','other-services.js','legal-documents.js','styles.css'].map(file => copyPublicFile(join('public',file),join(output,file))));
+  await Promise.all(['app.js','seo.js','search-content.js','service-search-content.js','other-services.js','legal-documents.js','styles.css'].map(file => copyPublicFile(join('public',file),join(output,file))));
   await copyAssets('public/assets', join(output, 'assets'));
+  // Approved ownership proofs belong only on the canonical production host.
+  if (!preview) {
+    for (const file of ['yandex_0af32123aa1d73be.html', 'googlef0cd9bf0538e0e60.html']) {
+      await copyPublicFile(join('public', file), join(output, file));
+    }
+  }
   if (layout === 'beget') {
     await copyPublicFile('public/.htaccess', join(output, '.htaccess'));
     await mkdir(join(output, 'api'), {recursive:true});
@@ -64,9 +71,20 @@ export async function buildStaticSite({output, base = '', preview = false, layou
     <meta property="og:title" content="${escape(seo.title)}" />
     <meta property="og:description" content="${escape(seo.description)}" />
     <meta property="og:url" content="${escape(seo.canonical)}" />
-    <meta property="og:site_name" content="DAMVI" />
+    <meta property="og:site_name" content="Damvi" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="ru_RU" />
+    <meta property="og:image" content="${escape(seo.image)}" />
+    <meta property="og:image:secure_url" content="${escape(seo.image)}" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Damvi — цифровые решения для бизнеса" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${escape(seo.title)}" />
+    <meta name="twitter:description" content="${escape(seo.description)}" />
+    <meta name="twitter:image" content="${escape(seo.image)}" />
+    <meta name="twitter:image:alt" content="Damvi — цифровые решения для бизнеса" />
     <script id="site-structured-data" type="application/ld+json">${JSON.stringify(seo.jsonLd).replace(/</g,'\\u003c')}</script>
     ${layout === 'pages' ? `<meta name="damvi-pages-base" content="${escape(base)}" />` : ''}</head>`)
       .replace('/styles.css"', '/styles.css?v=' + cssVersion + '"');
@@ -87,8 +105,19 @@ export async function buildStaticSite({output, base = '', preview = false, layou
   }
   const indexable = model.routes.filter(path=>!getPageSeo(path,model.services,model.goals).noindex);
   const urls = preview ? [] : indexable;
-  await writeFile(join(output,'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(path=>`  <url><loc>${escape(SITE_ORIGIN+(path==='/'?'/':path))}</loc></url>`).join('\n')+'\n</urlset>\n');
-  await writeFile(join(output,'robots.txt'), 'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /_pages/\n'+(preview?'':`Sitemap: ${SITE_ORIGIN}/sitemap.xml\n`));
+  const dates = await readFile('seo/page-content-dates.json', 'utf8').then(JSON.parse).catch(error => { if (error.code === 'ENOENT') return {}; throw error; });
+  await writeFile(join(output,'sitemap.xml'), '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls.map(path => {
+    const record = dates[path];
+    const lastmod = record?.hash === pageFingerprint(path, model) && /^\d{4}-\d{2}-\d{2}$/.test(record.date) ? `<lastmod>${record.date}</lastmod>` : '';
+    const priority = path === '/' ? '1.0' : ['/privacy','/consent','/legal'].includes(path) ? '0.2' : path === '/projects' ? '0.7' : '0.8';
+    return `  <url><loc>${escape(SITE_ORIGIN+(path==='/'?'/':path))}</loc>${lastmod}<priority>${priority}</priority></url>`;
+  }).join('\n')+'\n</urlset>\n');
+  await writeFile(join(output,'robots.txt'), robotsText(preview));
+  if (!preview) {
+    const documents = llmDocuments(model);
+    await writeFile(join(output, 'llms.txt'), documents.short);
+    await writeFile(join(output, 'llms-full.txt'), documents.full);
+  }
   await writeFile(join(output,'route-map.json'),JSON.stringify({routes:model.routes,aliases:model.aliases}));
   console.log(`Built ${model.routes.length} HTML pages: ${output}${preview?' (noindex preview)':''}`);
   return model;
