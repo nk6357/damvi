@@ -38,6 +38,7 @@ jobs:
           node scripts/build-seo.mjs --local
           node scripts/check-search-readiness.mjs
           node scripts/check-navigation.mjs
+          node tests/check-build-security.mjs
       - uses: actions/upload-pages-artifact@v4
         with:
           path: dist/pages

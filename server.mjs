@@ -1,10 +1,13 @@
-import { createReadStream, existsSync } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { createReadStream, existsSync, readFileSync } from 'node:fs';
+import { stat, realpath } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 
 const port = Number(process.env.PORT || 4173);
 const publicDir = join(process.cwd(), 'public');
+const publicReal = await realpath(publicDir);
+const policy = readFileSync(join(publicDir, '.htaccess'), 'utf8').match(/^Header always set Content-Security-Policy "([^"]+)"$/m)?.[1];
+if (!policy) throw new Error('Missing security policy');
 const mime = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
@@ -18,76 +21,34 @@ const json = (res, status, body) => {
   res.end(JSON.stringify(body));
 };
 
-const email = /^[\w!#$%&'*+\/=?^{}|~-]+(?:\.[\w!#$%&'*+\/=?^{}|~-]+)*@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/i;
-const telegram = /^(?:@[a-z0-9_]{5,32}|(?:https?:\/\/)?(?:t\.me|telegram\.me)\/[a-z0-9_]{5,32}\/?)$/i;
-
-async function sendMail(payload) {
-  const { RESEND_API_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } = process.env;
-  if (!RESEND_API_KEY || !CONTACT_TO_EMAIL || !CONTACT_FROM_EMAIL) {
-    return { configured: false };
-  }
-  const text = [
-    'Новая заявка с сайта DAMVI', '', `Проблема: ${payload.problem}`,
-    `Telegram / email: ${payload.contact}`
-  ];
-  if (payload.phone) text.push(`Телефон: ${payload.phone}`);
-  text.push('', 'Согласие на обработку данных: подтверждено отдельным флажком.',
-    'Версия текста согласия: 2026-11-23.2-preview', `Время получения: ${new Date().toISOString()}`);
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from: CONTACT_FROM_EMAIL, to: [CONTACT_TO_EMAIL], subject: 'Новая заявка DAMVI', text: text.join('\n') })
-  });
-  if (!response.ok) throw new Error(`Mail transport returned ${response.status}`);
-  return { configured: true };
-}
-
-async function handleContact(req, res) {
-  let raw = '';
-  for await (const part of req) {
-    raw += part;
-    if (raw.length > 100000) return json(res, 413, { ok: false, message: 'Слишком большой объём данных.' });
-  }
-  let body;
-  try { body = JSON.parse(raw); } catch { return json(res, 400, { ok: false, message: 'Не удалось прочитать данные формы.' }); }
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return json(res, 400, { ok: false });
-  if (body.website) return json(res, 422, { ok: false, message: 'Запрос отклонён.' });
-  const problem = typeof body.problem === 'string' ? body.problem.trim() : '';
-  const contact = typeof body.contact === 'string' ? body.contact.trim() : '';
-  const phone = typeof body.phone === 'string' ? body.phone.trim() : '';
-  const errors = {};
-  if (body.consent !== true) errors.consent = 'Подтвердите согласие на обработку персональных данных.';
-  if (!problem) errors.problem = 'Опишите задачу.';
-  else if ([...problem].length > 2500) errors.problem = 'Сократите описание до 2500 символов.';
-  if (!contact) errors.contact = 'Укажите, куда вам ответить.';
-  else if (contact.length > 254 || !(email.test(contact) || telegram.test(contact))) errors.contact = 'Укажите корректный email, @username или ссылку t.me.';
-  if (!phone || phone === '+7') errors.phone = 'Укажите номер для связи.';
-  else if (!/^\+7[0-9 ().-]{10,30}$/.test(phone) || !/^7\d{10}$/.test(phone.replace(/\D/g, ''))) errors.phone = 'Введите 10 цифр после +7.';
-  if (Object.keys(errors).length) return json(res, 422, { ok: false, errors });
-  try {
-    const result = await sendMail({ problem, contact, phone });
-    if (!result.configured) return json(res, 503, { ok: false, message: 'Приём заявок ещё не настроен. Подключите почтовый транспорт в переменных окружения.' });
-    return json(res, 200, { ok: true, message: 'Заявка отправлена. Напишем вам по указанному контакту' });
-  } catch (error) {
-    console.error('Email send failed:', error.message);
-    return json(res, 502, { ok: false, message: 'Не удалось отправить заявку. Попробуйте ещё раз позже.' });
-  }
-}
-
 createServer(async (req, res) => {
-  const url = new URL(req.url || '/', `http://${req.headers.host}`);
+  res.setHeader('Content-Security-Policy', policy);
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=(), usb=()');
+  let url, pathname;
+  try {
+    url = new URL(req.url || '/', 'http://localhost');
+    pathname = decodeURIComponent(url.pathname);
+    if (/[\x00-\x1f\x7f\\]/.test(pathname)) throw new Error('Invalid path');
+  } catch { return json(res, 400, { ok: false }); }
+  if (/(^|\/)\.(?!well-known(?:\/|$))|^\/(?:private|legal-drafts|seo|scripts|tests|node_modules|vendor)(?:\/|$)|\.(?:bak|old|orig|save|swp|tmp|sql|sqlite3?|db|log|ini|env|ya?ml|zip|tar|gz|7z|rar)(?:$|\/)/i.test(pathname)
+      || /^\/(?:package(?:-lock)?\.json|composer\.(?:json|lock)|(?:contact|telegram)\.example\.php|README\.md|BEGET\.md|(?:FORM-SECURITY|SITE-SECURITY|DDOS-BEGET)\.txt|route-map\.json)$/i.test(pathname)
+      || /\.php(?:\/|$)/i.test(pathname) && pathname !== '/api/contact.php') return json(res, 404, { ok: false });
   if (url.pathname === '/api/contact' || url.pathname === '/api/contact.php') {
-    if (req.method === 'POST') return handleContact(req, res);
+    if (req.method === 'POST') return json(res, 503, { ok: false, message: 'Для отправки формы используйте PHP-сервер Beget. Напишите на office@damvi.ru.' });
     return json(res, 405, { ok: false, message: 'Метод не поддерживается.' });
   }
   if (req.method !== 'GET' && req.method !== 'HEAD') return json(res, 405, { ok: false, message: 'Method not allowed.' });
-  const requestPath = url.pathname === '/' ? '/index.html' : url.pathname;
+  const requestPath = pathname === '/' ? '/index.html' : pathname;
   const candidate = normalize(join(publicDir, requestPath));
-  const isLocal = candidate.startsWith(publicDir);
+  const isLocal = candidate.startsWith(publicDir + '/');
   if (isLocal && existsSync(candidate)) {
     try {
       const info = await stat(candidate);
-      if (info.isFile()) {
+      const actual = await realpath(candidate);
+      if (info.isFile() && actual.startsWith(publicReal + '/') && mime[extname(candidate)]) {
         res.writeHead(200, { 'Content-Type': mime[extname(candidate)] || 'application/octet-stream' });
         if (req.method === 'HEAD') return res.end();
         return createReadStream(candidate).pipe(res);
@@ -98,4 +59,4 @@ createServer(async (req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
   if (req.method === 'HEAD') return res.end();
   createReadStream(index).pipe(res);
-}).listen(port, () => console.log(`DAMVI available at http://localhost:${port}`));
+}).listen(port, '127.0.0.1', () => console.log(`DAMVI available at http://localhost:${port}`));

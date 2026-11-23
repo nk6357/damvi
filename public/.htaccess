@@ -1,9 +1,15 @@
 Options -Indexes
 DirectoryIndex index.html
+LimitRequestBody 20000
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-XSS-Protection "0"
+Header always set Content-Security-Policy "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; form-action 'self'; base-uri 'none'; object-src 'none'; frame-src 'none'; frame-ancestors 'self'"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+Header always set Strict-Transport-Security "max-age=86400" "expr=%{HTTPS} == 'on'"
+Header always unset X-Powered-By
 </IfModule>
 <IfModule mod_deflate.c>
 <IfModule mod_filter.c>
@@ -11,6 +17,18 @@ AddOutputFilterByType DEFLATE text/html text/css text/javascript application/jav
 </IfModule>
 </IfModule>
 RewriteEngine On
+# Reject accidental secrets/backups before Apache serves existing files.
+# Keep .well-known available for certificate issuance.
+RewriteRule "(^|/)\.(?!well-known(?:/|$))" - [R=404,END]
+RewriteRule ^(?:private|legal-drafts|seo|scripts|tests|node_modules|vendor)(?:/|$) - [R=404,END,NC]
+RewriteRule \.(?:bak|old|orig|save|swp|tmp|sql|sqlite3?|db|log|ini|env|ya?ml|zip|tar|gz|7z|rar)(?:$|/) - [R=404,END,NC]
+RewriteRule ^(?:package(?:-lock)?\.json|composer\.(?:json|lock)|(?:contact|telegram)\.example\.php|README\.md|BEGET\.md|(?:FORM-SECURITY|SITE-SECURITY|DDOS-BEGET)\.txt|route-map\.json)$ - [R=404,END,NC]
+RewriteRule ^(?!api/contact\.php$).*\.php(?:/|$) - [R=404,END,NC]
+RewriteCond %{REQUEST_METHOD} !^(GET|HEAD|POST)$
+RewriteRule ^ - [R=405,END]
+RewriteCond %{REQUEST_METHOD} =POST
+RewriteCond %{REQUEST_URI} !^/api/contact(?:\.php)?$
+RewriteRule ^ - [R=405,END]
 RewriteCond %{HTTP_HOST} ^www\.damvi\.ru$ [NC]
 RewriteRule ^ https://damvi.ru%{REQUEST_URI} [R=301,END]
 RewriteRule ^_pages(?:/|$) - [R=404,END]

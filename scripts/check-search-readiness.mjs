@@ -31,6 +31,8 @@ for (const env of environments) {
 
   for (const route of [...model.routes, '/404']) {
     const html = await read(join(env.root, htmlFile(env, route)));
+    assert.ok(html.includes('http-equiv="Content-Security-Policy"'), env.name + route + ': missing CSP');
+    assert.ok(html.includes('script-src &#39;self&#39;'), env.name + route + ': scripts must remain same-origin');
     const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
     assert.ok(main, env.name + route + ': missing rendered content');
     const meta = (key, property = false) => html.match(new RegExp(`<meta ${property ? 'property' : 'name'}="${key}" content="([^"]*)"`))?.[1];
@@ -90,6 +92,7 @@ for (const env of environments) {
   for (const entry of await readdir(env.root)) {
     assert.ok(!['seo', 'private', '.env', 'node_modules', 'scripts'].includes(entry), env.name + ': internal files in release');
   }
+  if (env.name !== 'pages') assert.deepEqual((await readdir(join(env.root, 'api'))).sort(), ['contact-lib.php', 'contact.php'], env.name + ': unexpected public API files');
   snapshot.environments[env.name] = { robots, sitemapUrls, aliases: model.aliases, routes };
 }
 for (const file of ['public/styles.css', 'public/app.js', 'public/seo.js', 'public/service-search-content.js', 'public/legal-documents.js', 'public/other-services.js']) {

@@ -447,6 +447,9 @@ function validateClient(data) {
   if (!data.phone || data.phone === '+7') errors.phone = 'Укажите номер для связи.';
   else if (!/^\+7[0-9 ().-]{10,30}$/.test(data.phone) || !/^7\d{10}$/.test(data.phone.replace(/\D/g, ''))) errors.phone = 'Введите 10 цифр после +7.';
   if (data.consent !== true) errors.consent = 'Подтвердите согласие на обработку персональных данных.';
+  for (const key of ['problem', 'contact', 'phone']) {
+    if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(data[key])) errors[key] = 'Удалите недопустимые символы.';
+  }
   return errors;
 }
 function setupForm() {
@@ -513,19 +516,13 @@ function setupForm() {
     status.className = 'form-status';
     if (showErrors(validateClient(data))) return;
     if (pages) {
-      const telegram = telegramDraft(['Здравствуйте! Хочу обсудить задачу.', '', data.problem, '', 'Контакт: ' + data.contact, 'Телефон: ' + data.phone].join('\n'));
-      const link = document.createElement('a');
-      link.href = telegram.href;
-      link.target = '_blank';
-      link.rel = 'noreferrer';
-      link.textContent = 'откройте черновик в Telegram';
-      status.append('Готово к отправке. ', link, ' и отправьте сообщение.');
-      link.focus({ preventScroll: true });
+      status.classList.add('is-error');
+      status.textContent = 'Это тестовая версия сайта. Отправка формы будет доступна на основном сайте. Напишите на office@damvi.ru.';
       return;
     }
     button.disabled = true;
     buttonLabel.textContent = 'Отправляем…';
-    const fallback = 'Не удалось отправить заявку. Попробуйте ещё раз или напишите в Telegram @nk6357.';
+    const fallback = 'Не удалось отправить заявку. Попробуйте ещё раз или напишите на office@damvi.ru.';
     try {
       const response = await fetch('/api/contact.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
       const result = await response.json().catch(() => null);
