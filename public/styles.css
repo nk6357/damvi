@@ -173,7 +173,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 1;
-  animation: form-check-in 4.5s ease-in-out both;
+  animation: form-check-in 5s ease-in-out both;
 }
 .form-confirmation p { margin: 0; color: var(--muted); line-height: 1.4; }
 .form-confirmation p + p { margin-top: 8px; }

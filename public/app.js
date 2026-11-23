@@ -564,6 +564,14 @@ function setupForm() {
         <p>Напишем вам по указанному контакту.</p>
       </div>`;
       formEl.querySelector('.form-confirmation').focus({ preventScroll: true });
+      window.setTimeout(() => {
+        if (!formEl.isConnected) return;
+        const restoreFocus = formEl.contains(document.activeElement);
+        formEl.outerHTML = form();
+        setupForm();
+        setupButtonShine();
+        if (restoreFocus) document.querySelector('#problem')?.focus({ preventScroll: true });
+      }, 5000);
     } catch {
       status.classList.add('is-error');
       status.textContent = fallback;
