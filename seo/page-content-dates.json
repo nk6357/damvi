@@ -4,88 +4,88 @@
     "hash": "c8c42a61953be9290599102f5d1b3b8f625f7477bea1bc07c66f532b63ffc881"
   },
   "/projects": {
-    "date": "2026-11-23",
-    "hash": "ebb610d1d81dfd5d970314b22235a4e24fcde75812b9108600e54dc768ab0203"
+    "date": "2026-11-24",
+    "hash": "6fe9c4cca6a0eabf46e02d8ce05fe17c8e909a78c529787c57c2ef8000ac0dbe"
   },
   "/services/other": {
-    "date": "2026-11-23",
-    "hash": "b8fcc10cd36025e24883aeccf5d83b700866bfa0cd28bd3398ddf9efec77fe6f"
+    "date": "2026-11-24",
+    "hash": "9148099b55b296d63a49637289d3ebed675a9f7673f215a9cdeac4230b6697b1"
   },
   "/services/websites": {
-    "date": "2026-11-23",
-    "hash": "92463957782c8014afb0f20b3b4443d85be929c2650d0b5db1f37c4f49404d11"
+    "date": "2026-11-24",
+    "hash": "6091fa1c010a8cccd442929cf3e7b3a2bd565caa47a752690948869e133ed049"
   },
   "/services/chatbots": {
-    "date": "2026-11-23",
-    "hash": "e47ea3a8ba1304225726035e30f7b7885ab2149dfc9a9f508518303f76f3fcc6"
+    "date": "2026-11-24",
+    "hash": "94e6795233c1996c37c841c3eed10f44004709e3b776e1a84d8067609e393902"
   },
   "/services/ai-automation": {
-    "date": "2026-11-23",
-    "hash": "83756c995ca2ab14a859c898c6006f4733a0f688780cee7143b93288b9f8a3a6"
+    "date": "2026-11-24",
+    "hash": "ad277c3b7ebc40a3bc60b257619ea0618c1d20c0ebd18bbd72d4ef312773e3dc"
   },
   "/services/geo": {
-    "date": "2026-11-23",
-    "hash": "ef8f2fd2f75c3200e819f345e317b1bb754c2c00a56bc8a19ab9b6d28c70109f"
+    "date": "2026-11-24",
+    "hash": "29e1987f8b3edbe701b0175ef5eb26e49cc28e38ca3c91526979c8a2dd37a4ab"
   },
   "/services/seo": {
-    "date": "2026-11-23",
-    "hash": "456d869f361eee6e4f2cec6c0d1b7f973a40632a4de747cfd606aa67f86ecb81"
+    "date": "2026-11-24",
+    "hash": "c958f22d767d7b9a0d21a9a843ac073da44693947389a7fc1b5c20b982b1a95a"
   },
   "/services/seo-blog": {
-    "date": "2026-11-23",
-    "hash": "e5160a5da20e288300ee837e4d0b6f124e79ab6d299e078500157a9dfc13059e"
+    "date": "2026-11-24",
+    "hash": "cd96743245fb841a42ef47e885c125c74edf826a0ff0f5fd37f1a6cda0be8fbc"
   },
   "/services/web-apps": {
-    "date": "2026-11-23",
-    "hash": "435c37593a2fb3160f0cadb39ef16a03b47e1fc368f8ca933f754416965fadc5"
+    "date": "2026-11-24",
+    "hash": "4de058bac2d6be6b994580a35fae6559f0b1c9c9f5d76ba17124a24683b8cdde"
   },
   "/services/mvp-prototypes": {
-    "date": "2026-11-23",
-    "hash": "490f6f1c90cdcb2b62ec7cdf778901d876cda4278c9ea41976229823dcd92239"
+    "date": "2026-11-24",
+    "hash": "1ca6b2626b4f5e1a14748080da8de9c683d1e4988926e6319d1f9eb5d2e37248"
   },
   "/services/mobile-apps": {
-    "date": "2026-11-23",
-    "hash": "85309efdcacfa6d2b8536d72945c086f3c465c8457f642a8e15e091133a1b9cc"
+    "date": "2026-11-24",
+    "hash": "59ab72664d0afad5389e34f42c15648efab9bfc31c49b1a8d74fabde552a8b7f"
   },
   "/services/desktop-apps": {
-    "date": "2026-11-23",
-    "hash": "4aa1edd75f1ecd9c228f0fc42d019df492202fe763295a404b82d4de1c6a26aa"
+    "date": "2026-11-24",
+    "hash": "8168d91b9383fdebb0fecff890b8283ce9286076556bc33b647ced8adf544b2c"
   },
   "/services/mini-apps": {
-    "date": "2026-11-23",
-    "hash": "1cddc00b8433c25ae8540be0dbe980a56a9ecb199efe0d9455d7d86051200b1a"
+    "date": "2026-11-24",
+    "hash": "56ebe0bca83250545188f92c1c9464c50e447237a8b3bb39b402b5d66de9a0d8"
   },
   "/services/custom-crm": {
-    "date": "2026-11-23",
-    "hash": "8d8bb5bc5083ace8c65bf5aebd94fb97b3aef4b061afcc9b7d73b8ce720065d1"
+    "date": "2026-11-24",
+    "hash": "89fb510f00a47954298b12fe54c9ae9bc358833b57759cffee8b08a301bb1509"
   },
   "/services/integrations": {
-    "date": "2026-11-23",
-    "hash": "d0ac358a72712dfa8488dd9fa6c3f6fa4e74b98e131b0b9002def4e853aeb4e9"
+    "date": "2026-11-24",
+    "hash": "e159ff67a2c474685b41d9cbd71c9bcca26b0cfe472a052bdb23ac86346ccf2f"
   },
   "/services/data-parsers": {
-    "date": "2026-11-23",
-    "hash": "7182d1c7df160279e560626befbd8a5df0897ff7bee9dc08653e9317db9db69a"
+    "date": "2026-11-24",
+    "hash": "ff383739054cf80ea48f17ac10db2f64b96af324e843993a2414ff441d3ab6fc"
   },
   "/services/web-analytics": {
-    "date": "2026-11-23",
-    "hash": "98c90433650eaa48b6464b5b95a4c3f908dc95defe326304fedb551bee215521"
+    "date": "2026-11-24",
+    "hash": "722d1309c3ff19538629f400101318cca57c254aecb65dfba8da83753a51a7aa"
   },
   "/services/conversion-optimization": {
-    "date": "2026-11-23",
-    "hash": "f81a480ea9f272014a68aa6fcf949ca9f735d82d3e046daa7eb150af6f673f25"
+    "date": "2026-11-24",
+    "hash": "263a081953b421179f70ae28f69f39fbfe6a79fdbc7a206b53895731a5352355"
   },
   "/services/web-design": {
-    "date": "2026-11-23",
-    "hash": "3a6b6d84b9c1d02f801e773169b5361cdc146ececa0634df723f26bf9f3f67d6"
+    "date": "2026-11-24",
+    "hash": "0e3076c8e8295ff4636a0dc30cdb115c8da65308c73b1be1219902ce8344ad81"
   },
   "/goals/more-clients": {
-    "date": "2026-11-23",
-    "hash": "0f8fc4dd60515e3863073d2f0545c8769bca033648437f962813bf3878689e27"
+    "date": "2026-11-24",
+    "hash": "a45d61dd166180f226c0f8ac25615e0ae2a1405b42a9c5c2da264e9bb1f7b1e9"
   },
   "/goals/less-manual-work": {
-    "date": "2026-11-23",
-    "hash": "28054e0a4e85ce62f599ff00789c80efc6ac17302c82b6b5b5a4b07a5274bd2c"
+    "date": "2026-11-24",
+    "hash": "4695b80715dcd7aeca7f001a138f46f8771705001d6082505105ffafd2875e95"
   },
   "/goals/launch-product": {
     "date": "2026-11-23",

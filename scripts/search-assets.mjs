@@ -30,7 +30,7 @@ export function llmDocuments(model) {
     const sections = (service.sections || []).map(section => `#### ${section.title}\n\n${(section.paragraphs || []).join('\n\n')}\n\n${(section.items || []).map(([title, text]) => `- ${title}: ${text}`).join('\n')}`).join('\n\n');
     return `### ${service.name}\n\nURL: ${SITE_ORIGIN}/services/${service.slug}\n\n${service.subtitle}\n\nСтоимость: ${service.price}. Цена «от» — минимальная стоимость входа; точный объём и бюджет согласуются отдельно.\n\n${facts}\n\n${sections}\n\n${answerText(getServiceFaq(service), 4)}`;
   }).join('\n\n');
-  full += '\n## Показанные работы\n\n' + model.config.projects.map(project => `### ${project.name}\n\n${project.description}\n\nПроект: ${project.url}\nКарточка: ${SITE_ORIGIN}/projects#${project.slug}\n`).join('\n');
+  full += '\n## Показанные работы\n\n' + model.config.projects.map(project => `### ${project.name}\n\n${project.description}\n\n${(project.caseDetails || []).map(([label, text]) => `${label}: ${text}`).join("\n\n")}\n\nПроект: ${project.url}\nКарточка: ${SITE_ORIGIN}/projects#${project.slug}\n`).join('\n');
   full += contacts + legal;
   return { short, full };
 }

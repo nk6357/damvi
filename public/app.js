@@ -121,6 +121,7 @@ const config = {
       name: 'Сайт для B2B-компании Insol',
       type: 'Сайт платформы',
       description: 'Сайт платформы оценки и подбора проверенных AI-разработчиков/интеграторов для бизнеса.',
+      caseDetails: [['Задача', 'Создать современный сайт для B2B-аудитории по готовым текстам заказчика с выразительной визуальной подачей.'], ['Что сделали', 'Разработали сайт платформы Insol на основе предоставленного содержания.'], ['Результат', 'Опубликованный сайт платформы оценки и подбора проверенных AI-разработчиков и интеграторов для бизнеса.']],
       url: 'https://insol-dvlp.ru'
     },
     {
@@ -128,6 +129,7 @@ const config = {
       name: 'Кинкали',
       type: 'Сайт ресторана',
       description: 'Сайт ресторана грузинской кухни «Кинкали» в Перми.',
+      caseDetails: [['Задача', 'Создать сайт ресторана с возможностью сделать заказ прямо на сайте.'], ['Что сделали', 'Разработали сайт ресторана «Кинкали» для представления заведения и заказа на сайте.'], ['Результат', 'Опубликованный сайт ресторана грузинской кухни в Перми с пользовательским сценарием заказа.']],
       url: 'https://kinkali.ru'
     }
   ]
@@ -215,7 +217,7 @@ function goalScenarios(slug) {
 function serviceDetails(service) {
   const telegram = telegramDraft(`Здравствуйте! Хочу обсудить задачу связанную с услугой "${service.name}"`);
   const entryPriceNote = service.price.startsWith('от ') ? '<p class="entry-price-note">Цена с пометкой «от» — это минимальный бюджет входа в разработку или продвижение. Точная стоимость зависит от объёма и сложности задачи и фиксируется до начала работ.</p>' : '';
-  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${brandText(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}${renderServiceSearchContent(service)}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать в Telegram</a><a class="button button-red button-shine" href="tel:${escape(agencyProfile.phone)}">Позвонить</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
+  return `<section class="service-detail"><div class="service-detail-intro"><p class="section-label">Решение под задачу бизнеса</p><h2 class="direction-title">${brandText(service.title)}</h2><p class="service-summary">${escape(service.subtitle)}</p><dl class="service-facts">${service.facts.map(([label, value]) => `<div><dt>${escape(label)}</dt><dd>${escape(value)}</dd></div>`).join('')}</dl>${entryPriceNote}</div><div class="service-detail-body">${service.sections.map(renderServiceSection).join('')}${renderServiceSearchContent(service)}</div><div class="service-write"><a class="button button-red button-shine" href="${escape(telegram.href)}" target="_blank" rel="noreferrer">Написать в Telegram</a><a class="button button-red button-shine" href="/#contact-form">Связаться</a></div><div class="service-cta-panel"><div><p class="section-label">Обсудим вашу задачу</p><h3>${escape(service.cta)}</h3></div></div></section>`;
 }
 
 function telegramDraft(message) {
@@ -279,7 +281,7 @@ function servicePage(slug) {
   return `${innerHeader(service.name, 'НАПРАВЛЕНИЕ', parent, 'direction-title')}${serviceDetails(service)}${footer()}`;
 }
 function otherPage() { return `${innerHeader('Другие направления', 'НАПРАВЛЕНИЕ', '/#services', 'direction-title')}<section class="services-section other-directions"><div class="section-heading"><div><p class="section-label">Дополнительные решения</p><h2 class="direction-title">Другие направления</h2></div><div class="section-heading-copy"><p>Берёмся за задачи, которым нужен отдельный цифровой продукт, интеграция, аналитика, дизайн или контент.</p><p>Цена «от» — минимальная стоимость входа. Точный бюджет фиксируем после уточнения объёма и сложности.</p></div></div>${servicesRows(config.otherServices, 'compact')}</section>${footer()}`; }
-function projectsPage() { return `${innerHeader('Наши работы', '', '/#works', 'direction-title')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card" id="${escape(project.slug)}"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div></section>${footer()}`; }
+function projectsPage() { return `${innerHeader('Наши работы', '', '/#works', 'direction-title')}<section class="projects-page"><div class="section-heading"><div><p class="section-label">Реализованные проекты</p><h2>НАШИ РАБОТЫ</h2></div><div class="section-heading-copy"><p>Сайты и цифровые продукты, которые уже работают для бизнеса.</p></div></div><div class="projects-grid">${config.projects.map(project => `<article class="project-card" id="${escape(project.slug)}"><p class="project-type">${escape(project.type)}</p><h3 class="direction-title">${escape(project.name)}</h3><p class="project-description">${escape(project.description)}</p><a class="button button-red" href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект </a></article>`).join('')}</div><section class="service-search-content" aria-labelledby="project-cases"><h2 id="project-cases">Задачи и результаты проектов</h2>${config.projects.map(project => `<details class="service-faq-item" id="case-${escape(project.slug)}"><summary><h3>${brandText(project.name)}</h3></summary>${project.caseDetails.map(([label, text]) => `<p><strong>${escape(label)}:</strong> ${escape(text)}</p>`).join('')}<p><a href="${escape(project.url)}" target="_blank" rel="noreferrer">Открыть проект</a></p></details>`).join('')}</section></section>${footer()}`; }
 function legalPage(doc) {
   const paragraphs = doc.text.split(/\n/).filter(Boolean).slice(1).map(line => {
     const tag = /^\d+\.\s/.test(line) ? 'h2' : 'p';

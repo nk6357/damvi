@@ -1,0 +1,20 @@
+Оставшиеся URL для последующего переобхода после восстановления дневной квоты.
+Все они уже есть в sitemap.xml; это не блокирует обычный обход.
+Не обходить лимиты сервиса.
+
+https://damvi.ru/services/other
+https://damvi.ru/services/seo-blog
+https://damvi.ru/services/web-apps
+https://damvi.ru/services/mvp-prototypes
+https://damvi.ru/services/mobile-apps
+https://damvi.ru/services/desktop-apps
+https://damvi.ru/services/mini-apps
+https://damvi.ru/services/custom-crm
+https://damvi.ru/services/integrations
+https://damvi.ru/services/data-parsers
+https://damvi.ru/services/web-analytics
+https://damvi.ru/services/conversion-optimization
+https://damvi.ru/services/web-design
+https://damvi.ru/privacy
+https://damvi.ru/consent
+https://damvi.ru/legal

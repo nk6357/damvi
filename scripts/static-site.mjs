@@ -47,11 +47,25 @@ export async function buildStaticSite({output, base = '', preview = false, layou
   await rm(target, {recursive:true, force:true});
   await mkdir(output, {recursive:true});
   // Explicit allowlist: never include private settings or internal legal drafts.
-  await Promise.all(['app.js','seo.js','search-content.js','service-search-content.js','other-services.js','legal-documents.js','styles.css'].map(file => copyPublicFile(join('public',file),join(output,file))));
+  const moduleFiles = ['app.js','seo.js','search-content.js','service-search-content.js','other-services.js','legal-documents.js'];
+  const moduleSources = await Promise.all(moduleFiles.map(async file => {
+    const source = join('public', file);
+    const entry = await lstat(source);
+    if (!entry.isFile() || entry.isSymbolicLink()) throw new Error('Unexpected symlink/non-file public resource');
+    return readFile(source, 'utf8');
+  }));
+  const moduleVersion = createHash('sha256').update(moduleSources.join('\n')).digest('hex').slice(0, 12);
+  // Version the entire module graph, including dynamic imports, as one release.
+  // Otherwise a cached dependency can restore old copy/metadata after navigation.
+  for (const [index, file] of moduleFiles.entries()) {
+    const source = moduleSources[index].replace(/(['"])\.\/([a-z-]+\.js)\1/g, (match, quote, dependency) => moduleFiles.includes(dependency) ? `${quote}./${dependency}?v=${moduleVersion}${quote}` : match);
+    await writeFile(join(output, file), source);
+  }
+  await copyPublicFile('public/styles.css', join(output, 'styles.css'));
   await copyAssets('public/assets', join(output, 'assets'));
   // Approved ownership proofs belong only on the canonical production host.
   if (!preview) {
-    for (const file of ['yandex_0af32123aa1d73be.html', 'googlef0cd9bf0538e0e60.html']) {
+    for (const file of ['yandex_0af32123aa1d73be.html', 'googlef0cd9bf0538e0e60.html', 'BingSiteAuth.xml']) {
       await copyPublicFile(join('public', file), join(output, file));
     }
   }
@@ -87,7 +101,8 @@ export async function buildStaticSite({output, base = '', preview = false, layou
     <meta name="twitter:image:alt" content="Damvi — цифровые решения для бизнеса" />
     <script id="site-structured-data" type="application/ld+json">${JSON.stringify(seo.jsonLd).replace(/</g,'\\u003c')}</script>
     ${layout === 'pages' ? `<meta name="damvi-pages-base" content="${escape(base)}" />` : ''}</head>`)
-      .replace('/styles.css"', '/styles.css?v=' + cssVersion + '"');
+      .replace('/styles.css"', '/styles.css?v=' + cssVersion + '"')
+      .replace(/\/app\.js"/g, '/app.js?v=' + moduleVersion + '"');
     return withBase(html);
   }
   for (const path of model.routes) {
