@@ -125,9 +125,21 @@ with tempfile.TemporaryDirectory(prefix='damvi-mail-test-') as directory:
 
         reset()
         failed.touch()
-        failure_response = request()
-        assert failure_response[0] == 502, ('MTA failure must not show success', failure_response)
+        for _ in range(3):
+            failure_response = request()
+            assert failure_response[0] == 502, ('Failed sends must not consume delivery quota', failure_response)
+        state_after_failure = json.loads((private / 'mail-rate.json').read_text())
+        assert not state_after_failure['clients'] and not state_after_failure['minute'] and not state_after_failure['hour']
         failed.unlink()
+        assert request()[0] == 200, 'First success after failures must be allowed'
+        before_failure = (private / 'mail-rate.json').read_text()
+        failed.touch()
+        assert request()[0] == 502
+        assert (private / 'mail-rate.json').read_text() == before_failure, 'Failed second send consumed quota or changed cooldown'
+        failed.unlink()
+        assert request()[0] == 200, 'Second successful send must be allowed immediately'
+        status, headers, _ = request()
+        assert status == 429 and 590 <= int(headers['Retry-After']) <= 600
         reset()
         config.rename(private / 'disabled.php')
         assert request()[0] == 503
@@ -146,6 +158,27 @@ with tempfile.TemporaryDirectory(prefix='damvi-mail-test-') as directory:
     def reserve(path, ip, now):
         result = subprocess.run([PHP, '-r', worker, str(helper), str(path), ip, str(now)], capture_output=True, text=True, check=True)
         return int(result.stdout)
+
+    # Delivery failures and exceptions restore the exact previous state while locked.
+    delivery_worker = r"""define('DAMVI_CONTACT_HANDLER',true);require $argv[1];try { echo \Damvi\Contact\reserve($argv[2],str_repeat('x',64),'192.0.2.9',(int)$argv[3],[],static function()use($argv){if($argv[4]==='throw')throw new RuntimeException('MTA failed');if($argv[4]==='ok'){file_put_contents($argv[2].'.accepted',"1\n",FILE_APPEND|LOCK_EX);return true;}return false;});}catch(Throwable $e){echo 'error';}"""
+    def deliver(path, now, outcome):
+        return subprocess.run([PHP, '-r', delivery_worker, str(helper), str(path), str(now), outcome], capture_output=True, text=True, check=True).stdout
+    delivery_state = temp / 'delivery.json'
+    assert deliver(delivery_state, 1000, 'fail') == '-1'
+    assert deliver(delivery_state, 1000, 'ok') == '0'
+    previous = delivery_state.read_text()
+    assert deliver(delivery_state, 1100, 'throw') == 'error'
+    assert delivery_state.read_text() == previous
+    assert deliver(delivery_state, 1100, 'fail') == '-1'
+    assert delivery_state.read_text() == previous
+    assert deliver(delivery_state, 1200, 'ok') == '0'
+    assert deliver(delivery_state, 1799, 'ok') == '1'
+    assert deliver(delivery_state, 1800, 'ok') == '0'
+    concurrent_delivery = temp / 'delivery-parallel.json'
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
+        delivered = list(pool.map(lambda outcome: deliver(concurrent_delivery, 2000, outcome), ['fail','ok','fail','ok'] * 3))
+    assert delivered.count('0') == 2, delivered
+    assert (temp / 'delivery-parallel.json.accepted').read_text().splitlines() == ['1', '1']
 
     state = temp / 'time.json'
     assert reserve(state, '192.0.2.1', 1000) == 0
@@ -170,4 +203,4 @@ with tempfile.TemporaryDirectory(prefix='damvi-mail-test-') as directory:
         assert reserve(hourly, f'198.51.100.{i + 1}', 5000 + (i // 20) * 61) == 0
     assert reserve(hourly, '203.0.113.1', 5400) == 3200
 
-print('Contact tests passed: validation, origin, injection escaping, MIME/tel, two-request cooldown, concurrent limits, global cap and transport failure. No email sent.')
+print('Contact tests passed: validation, origin, injection escaping, MIME/tel, two-request cooldown, concurrent limits, global cap, transport failure rollback and exception rollback. No email sent.')

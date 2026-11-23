@@ -43,14 +43,14 @@ function validate(array $data): array {
     return [$fields, $errors];
 }
 
-// Two-request burst; second attempt starts a full 600-second cooldown.
+// Two-successful-send burst; the second acceptance starts a 600-second cooldown.
+// The optional delivery runs under the same lock; a false result returns -1 and rolls back quota.
 // No raw IP, problem, contact, phone or consent is saved here.
-function reserve(string $path, string $secret, string $ip, int $now, array $limits = []): int {
+function reserve(string $path, string $secret, string $ip, int $now, array $limits = [], ?callable $delivery = null): int {
     $limits += ['client' => [600, 2], 'hour' => [3600, 100], 'minute' => [60, 20]];
     [$window, $clientLimit] = $limits['client'];
     $file = @fopen($path . '.lock', 'c+');
     if (!$file) throw new \RuntimeException('Rate storage unavailable');
-    $temporary = null;
     try {
         if (!flock($file, LOCK_EX)) throw new \RuntimeException('Rate lock unavailable');
         if (!chmod($path . '.lock', 0600)) throw new \RuntimeException('Rate permissions unavailable');
@@ -62,6 +62,7 @@ function reserve(string $path, string $secret, string $ip, int $now, array $limi
             $state = json_decode($raw, true, 8, JSON_THROW_ON_ERROR);
         } else $state = ['clients' => [], 'hour' => [], 'minute' => []];
         if (!is_array($state) || !is_array($state['clients'] ?? null) || !is_array($state['hour'] ?? null) || !is_array($state['minute'] ?? null)) throw new \RuntimeException('Invalid rate storage');
+        $previous = $state;
         $clients = [];
         foreach ($state['clients'] as $key => $client) {
             if (!is_array($client) || !is_int($client['expires'] ?? null) || !is_int($client['used'] ?? null) || !is_int($client['blocked'] ?? null)) throw new \RuntimeException('Invalid rate entry');
@@ -91,14 +92,34 @@ function reserve(string $path, string $secret, string $ip, int $now, array $limi
         $clients[$key] = $client;
         if (count($clients) > 1000) throw new \RuntimeException('Rate storage full');
         $state['clients'] = $clients;
-        $encoded = json_encode($state, JSON_THROW_ON_ERROR);
-        $temporary = tempnam(dirname($path), '.mail-rate-');
-        if ($temporary === false || !chmod($temporary, 0600) || file_put_contents($temporary, $encoded) !== strlen($encoded) || !rename($temporary, $path)) throw new \RuntimeException('Rate write failed');
-        $temporary = null;
+        // Persist the reservation before handing mail to the MTA, so storage failure
+        // cannot send unaccounted mail. Keep the lock until success or rollback.
+        writeRateState($path, $state);
+        if ($delivery !== null) {
+            try { $sent = $delivery(); }
+            catch (\Throwable $error) {
+                writeRateState($path, $previous);
+                throw $error;
+            }
+            if ($sent !== true) {
+                writeRateState($path, $previous);
+                return -1;
+            }
+        }
         return 0;
     } finally {
-        if (is_string($temporary) && is_file($temporary)) unlink($temporary);
         flock($file, LOCK_UN); fclose($file);
+    }
+}
+
+function writeRateState(string $path, array $state): void {
+    $encoded = json_encode($state, JSON_THROW_ON_ERROR);
+    $temporary = tempnam(dirname($path), '.mail-rate-');
+    try {
+        if ($temporary === false || !chmod($temporary, 0600) || file_put_contents($temporary, $encoded) !== strlen($encoded) || !rename($temporary, $path)) throw new \RuntimeException('Rate write failed');
+        $temporary = null;
+    } finally {
+        if (is_string($temporary) && is_file($temporary)) unlink($temporary);
     }
 }
 

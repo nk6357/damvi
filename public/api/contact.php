@@ -47,17 +47,18 @@ if ($errors) respond(422, ['ok' => false, 'errors' => $errors]);
 if (!function_exists('mail')) respond(503, $unavailable);
 // Actual peer address only; never trust visitor-supplied forwarding headers.
 try {
-    // Reserve under a lock before delivery. Failed sends consume quota too.
-    $retryAfter = reserve(dirname($configFile) . '/mail-rate.json', $config['rate_secret'], $ip, time());
+    $message = compose($fields, time());
+    // Serialize delivery and accounting; roll back the reservation if mail fails.
+    // Fixed envelope and headers. No visitor content here, no mailbox login.
+    $retryAfter = reserve(dirname($configFile) . '/mail-rate.json', $config['rate_secret'], $ip, time(), [],
+        static fn(): bool => @mail('office@damvi.ru', $message['subject'], $message['body'], $message['headers'], '-foffice@damvi.ru')
+    );
     if ($retryAfter > 0) {
         header('Retry-After: ' . $retryAfter);
         $minutes = (int)ceil($retryAfter / 60);
         respond(429, ['ok' => false, 'retry_after' => $retryAfter, 'message' => "Лимит отправки исчерпан. Попробуйте через {$minutes} мин."]);
     }
-    $message = compose($fields, time());
-    // Fixed envelope and headers. No visitor content here, no mailbox login.
-    $sent = @mail('office@damvi.ru', $message['subject'], $message['body'], $message['headers'], '-foffice@damvi.ru');
 } catch (Throwable $error) { respond(503, $unavailable); }
-if (!$sent) respond(502, ['ok' => false, 'message' => 'Не удалось отправить заявку. Попробуйте позже или напишите на office@damvi.ru.']);
+if ($retryAfter === -1) respond(502, ['ok' => false, 'message' => 'Не удалось отправить заявку. Попробуйте позже или напишите на office@damvi.ru.']);
 // Acceptance by the local MTA is not confirmation of arrival in the inbox.
 respond(200, ['ok' => true, 'message' => 'Заявка отправлена. Напишем вам по указанному контакту']);
