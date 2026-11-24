@@ -584,6 +584,26 @@ function setupForm() {
     }
   });
 }
+function setupCookieNotice() {
+  const storageKey = 'damvi-technical-notice-v1';
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+    if (saved?.version === 1 && Number.isFinite(saved.expiresAt) && saved.expiresAt > Date.now()) return;
+  } catch { /* Storage may be unavailable; the notice still works for this visit. */ }
+  if (document.querySelector('#technical-notice')) return;
+  const notice = document.createElement('section');
+  notice.id = 'technical-notice';
+  notice.className = 'technical-notice';
+  notice.setAttribute('aria-label', 'Уведомление о технических данных');
+  notice.innerHTML = withBasePath(`<div class="technical-notice-copy"><p class="technical-notice-title">Только технические данные</p><p>При просмотре сайта обрабатываются только технические данные для его работы и защиты от спама. Аналитика и рекламные cookies не используются. После «ОК» сохраним в этом браузере отметку о закрытии уведомления на 180 дней. <a href="/privacy">Подробнее в политике</a>.</p></div><button class="button button-red" type="button">ОК</button>`);
+  notice.querySelector('button').addEventListener('click', () => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({ version: 1, expiresAt: Date.now() + 180 * 24 * 60 * 60 * 1000 }));
+    } catch { /* Do not block access when browser storage is disabled. */ }
+    notice.remove();
+  });
+  document.body.append(notice);
+}
 history.scrollRestoration = 'manual';
 document.addEventListener('click', event => {
   const link = event.target.closest('a[href^="/"]');
@@ -605,3 +625,5 @@ if (!document.querySelector('#page-content')) document.querySelector('#app').inn
 setupNav();
 if (renderedPath) { setupForm(); setupProcess(); setupProjectCards(); setupButtonShine(); }
 renderAtPosition(history.state, 'instant', { initial: true });
+
+setupCookieNotice();
